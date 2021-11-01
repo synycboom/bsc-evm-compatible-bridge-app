@@ -1,0 +1,12 @@
+body {
+  font-family: monospace;
+  letter-spacing: -0.5px;
+
+  background-color: #fcffe9;
+  background-image: linear-gradient(45deg, #fcffe9 0%, #d6fcfb 100%);
+  background-attachment: fixed;
+}
+
+p {
+  margin-bottom: 0px;
+}
