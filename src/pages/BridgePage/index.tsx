@@ -1,16 +1,16 @@
 import Title from 'antd/lib/typography/Title';
 import PageLayout from 'src/components/PageLayout';
-import Button from 'antd/lib/button';
+import Button from 'src/components/Button';
 import { useEffect, useState } from 'react';
 import Steps from 'antd/lib/steps';
 import ChooseAddress from 'src/components/ChooseAddress';
-
-import BridgePageStyle from './style';
-import ChooseNFT from 'src/components/ChooseNFTModal';
+import ChooseNFTModal from 'src/components/ChooseNFTModal';
 import { useRecoilState } from 'recoil';
 import { nftState } from 'src/state/bridge';
 import NFTDetail from 'src/components/NFTDetail';
 import { useWeb3React } from '@web3-react/core';
+import BridgePageStyle from './style';
+import TransferNFT from 'src/components/TransferNFT';
 
 const { Step } = Steps;
 
@@ -37,7 +37,7 @@ const BridgePage: React.FC = () => {
 
   return (
     <BridgePageStyle>
-      <ChooseNFT
+      <ChooseNFTModal
         visible={isModalVisible}
         onOk={confirmModal}
         onCancel={closeModal}
@@ -66,7 +66,9 @@ const BridgePage: React.FC = () => {
                   <NFTDetail disabled={step !== 1} next={next} />
                 ) : (
                   <>
-                    <p>Select an NFT to send through NFT Bridge</p>
+                    <p>
+                      <b>Select an NFT to transfer through NFT Bridge</b>
+                    </p>
                     {step === 1 && (
                       <Button
                         type='primary'
@@ -85,9 +87,14 @@ const BridgePage: React.FC = () => {
           />
           <Step
             disabled={step < 2}
-            title='Step 3: Review and transfer'
+            title='Step 3: Transfer NFT'
             description={
-              <div className='box'>Please review your data carefully</div>
+              <div className='box'>
+                <p>
+                  <b>Transfer NFT to Bridge</b>
+                </p>
+                {step === 2 && <TransferNFT />}
+              </div>
             }
           />
         </Steps>

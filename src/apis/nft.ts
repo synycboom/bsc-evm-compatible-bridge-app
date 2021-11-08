@@ -27,7 +27,7 @@ export const getNFTList = async (
   address: string,
   nftStandard: NFTStandard
 ): Promise<INFTParsedTokenAccount[]> => {
-  const url = `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?key=${setting.REACT_APP_COVALENT_API_KEY}&nft=true`;
+  const url = `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?key=${setting.COVALENT_API_KEY}&nft=true`;
   const response = await axios.get<{
     data: {
       items: INFTList;
@@ -48,7 +48,41 @@ export const getNFTList = async (
 
 export const getIsNftRegistered = async (
   chainId: number,
-  contractAddress: string
+  targetChainId: number,
+  tokenAddress: string
 ): Promise<boolean> => {
-  return false;
+  const forwardUrl = `${setting.API_URL}/v1/erc-721-swap-pairs?available=true&src_chain_id=${chainId}&dst_chain_id=${targetChainId}&src_token_addr=${tokenAddress}&limit=1`;
+  const backwardUrl = `${setting.API_URL}/v1/erc-721-swap-pairs?available=true&dst_chain_id=${chainId}&src_chain_id=${targetChainId}&dst_token_addr=${tokenAddress}&limit=1`;
+  const forwardResponse = await axios.get<{ pairs: [] }>(forwardUrl);
+  const backwardResponse = await axios.get<{ pairs: [] }>(backwardUrl);
+  return (
+    forwardResponse.data.pairs.length > 0 ||
+    backwardResponse.data.pairs.length > 0
+  );
+};
+
+export const getDataFromTokenUri = async (
+  tokenUri: string
+): Promise<{
+  name: string;
+  image: string;
+  description: string;
+}> => {
+  try {
+    const response = await axios.get<{
+      data: {
+        name: string;
+        image: string;
+        description: string;
+      };
+    }>(tokenUri);
+    return response.data.data || response.data;
+  } catch (error: any) {
+    console.error(error.response);
+    return {
+      name: '',
+      image: '',
+      description: '',
+    };
+  }
 };

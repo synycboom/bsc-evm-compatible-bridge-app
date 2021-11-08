@@ -5,7 +5,7 @@ import Input from 'antd/lib/input';
 import Tooltip from 'antd/lib/tooltip';
 import Title from 'antd/lib/typography/Title';
 import Space from 'antd/lib/space';
-import Button from 'antd/lib/button';
+import Button from 'src/components/Button';
 import { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -20,6 +20,7 @@ import { useRecoilState } from 'recoil';
 import { InjectedConnector } from '@web3-react/injected-connector';
 
 import ChooseAddressStyle from './style';
+import { message } from 'antd';
 
 const { Option } = Select;
 
@@ -29,7 +30,7 @@ type ChooseAccountPropType = {
 };
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 56, 97],
+  supportedChainIds: [1, 3, 4, 5, 42, 56, 97, 1000, 2000],
 });
 
 const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
@@ -54,12 +55,22 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
   };
 
   const validate = (): boolean => {
+    if (
+      !bridgeAddress.targetChain ||
+      !bridgeAddress.targetAddress ||
+      !bridgeAddress.sourceChain ||
+      !bridgeAddress.sourceAddress
+    ) {
+      return false;
+    }
     return true;
   };
 
   const validateAndNext = () => {
     if (validate()) {
       next();
+    } else {
+      message.error('Please choose address and chain!');
     }
   };
 
@@ -88,12 +99,17 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   <Select
                     placeholder='Select source chain'
                     value={bridgeAddress.sourceChain}
-                    onChange={(value) =>
+                    onChange={(value) => {
+                      let targetChain = bridgeAddress.targetChain;
+                      if (bridgeAddress.targetChain === value) {
+                        targetChain = undefined;
+                      }
                       setBridgeAddress({
                         ...bridgeAddress,
                         sourceChain: value,
-                      })
-                    }
+                        targetChain,
+                      });
+                    }}
                   >
                     {CHAIN_LIST.map((chainItem) => (
                       <Option value={chainItem.value} key={chainItem.id}>
@@ -125,12 +141,17 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   <Select
                     placeholder='Select target chain'
                     value={bridgeAddress.targetChain}
-                    onChange={(value) =>
+                    onChange={(value) => {
+                      let sourceChain = bridgeAddress.sourceChain;
+                      if (bridgeAddress.sourceChain === value) {
+                        sourceChain = undefined;
+                      }
                       setBridgeAddress({
                         ...bridgeAddress,
                         targetChain: value,
-                      })
-                    }
+                        sourceChain,
+                      });
+                    }}
                   >
                     {CHAIN_LIST.map((chainItem) => (
                       <Option value={chainItem.value} key={chainItem.id}>

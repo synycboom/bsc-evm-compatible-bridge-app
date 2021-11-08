@@ -6,14 +6,22 @@ import setting from 'src/setting';
 export const getChainList = () => {
   return [
     {
-      id: Number(setting.REACT_APP_ETH_CHAIN_ID),
+      id: Number(setting.ETH_CHAIN_ID),
       name: 'Ethereum',
       value: Chain.ETHEREUM,
+      registerFee: 0.02,
+      bridgeFee: 0.04,
+      currency: 'ETH',
+      swapAgentAddress: setting.ETH_SWAP_AGENT_CONTRACT,
     },
     {
-      id: Number(setting.REACT_APP_BSC_CHAIN_ID),
+      id: Number(setting.BSC_CHAIN_ID),
       name: 'Binance Smart Chain',
       value: Chain.BSC,
+      registerFee: 0.02,
+      bridgeFee: 0.04,
+      currency: 'BNB',
+      swapAgentAddress: setting.BSC_SWAP_AGENT_CONTRACT,
     },
   ];
 };
@@ -23,7 +31,7 @@ export const getChainData = (chain: Chain): ChainData => {
   return chainList.find((item) => item.value === chain)!;
 };
 
-export const getChainDataByChainId = (chainId: number): ChainData => {
+export const getChainDataByChainId = (chainId?: number): ChainData => {
   const chainList = getChainList();
   return chainList.find((item) => item.id === chainId)!;
 };
@@ -31,11 +39,11 @@ export const getChainDataByChainId = (chainId: number): ChainData => {
 export const getChainId = (chain: Chain): number => {
   switch (chain) {
     case Chain.BSC:
-      return Number(setting.REACT_APP_BSC_CHAIN_ID);
+      return Number(setting.BSC_CHAIN_ID);
     case Chain.ETHEREUM:
-      return Number(setting.REACT_APP_ETH_CHAIN_ID);
+      return Number(setting.ETH_CHAIN_ID);
     default:
-      return Number(setting.REACT_APP_ETH_CHAIN_ID);
+      return Number(setting.ETH_CHAIN_ID);
   }
 };
 

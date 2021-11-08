@@ -20,6 +20,7 @@ const ImageStyle = styled.div`
     width: 100%;
     height: 100%;
     background: #efefef;
+    min-height: 200px;
 
     .anticon-file-image {
       font-size: 48px;

@@ -1,4 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils';
+import { getDataFromTokenUri } from 'src/apis/nft';
 import {
   Chain,
   CovalentData,
@@ -8,13 +9,13 @@ import {
   NFT_STANDARD_OPTIONS,
 } from 'src/interfaces/nft';
 
-export const parseNFTData = (
+export const parseNFTData = async (
   walletAddress: string,
   tokenList: CovalentData[],
   standard: NFTStandard,
   chain: Chain
-): INFTParsedTokenAccount[] => {
-  return tokenList.reduce((arr, covalent) => {
+): Promise<INFTParsedTokenAccount[]> => {
+  const tokens = tokenList.reduce((arr, covalent) => {
     if (covalent.nft_data) {
       covalent.nft_data.forEach((data) =>
         arr.push({
@@ -47,6 +48,20 @@ export const parseNFTData = (
     }
     return arr;
   }, [] as INFTParsedTokenAccount[]);
+
+  return Promise.all(
+    tokens.map(async (token) => {
+      let image = token.image;
+      if (!image) {
+        const data = await getDataFromTokenUri(token.uri!);
+        image = data.image;
+      }
+      return {
+        ...token,
+        image,
+      };
+    })
+  );
 };
 
 export const getNFTStandard = (standard: NFTStandard): NFTStandardData => {

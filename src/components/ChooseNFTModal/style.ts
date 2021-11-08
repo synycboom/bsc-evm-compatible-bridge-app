@@ -7,6 +7,19 @@ const ChooseNFTModalStyle = styled(Modal)`
     justify-content: space-between;
   }
 
+  .manual-button {
+    padding: 0px;
+    span {
+      text-decoration: underline;
+    }
+  }
+
+  .manual-container {
+    p {
+      font-weight: bold;
+    }
+  }
+
   .ant-modal-content {
     border-radius: 16px;
     width: 600px;
@@ -33,7 +46,7 @@ const ChooseNFTModalStyle = styled(Modal)`
   }
 
   .ant-modal-body {
-    .ant-row {
+    .image-container {
       height: 400px;
       overflow: scroll;
     }

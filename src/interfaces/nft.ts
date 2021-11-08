@@ -41,6 +41,27 @@ export interface INFTParsedTokenAccount {
   standard: NFTStandard;
   chain: Chain;
 }
+
+export const EmptyNftData: INFTParsedTokenAccount = {
+  tokenId: '',
+  uri: '',
+  animation_url: '',
+  external_url: '',
+  image: '',
+  image_256: '',
+  nftName: '',
+  description: '',
+  walletAddress: '',
+  contractAddress: '',
+  amount: '',
+  decimals: 0,
+  uiAmount: 0,
+  uiAmountString: '',
+  name: '',
+  standard: NFTStandard.ERC_721,
+  chain: Chain.ETHEREUM,
+};
+
 export type CovalentNFTExternalData = {
   animation_url: string | null;
   external_url: string | null;
@@ -76,4 +97,8 @@ export type ChainData = {
   id: number;
   name: string;
   value: Chain;
+  registerFee: number;
+  bridgeFee: number;
+  currency: string;
+  swapAgentAddress: string;
 };

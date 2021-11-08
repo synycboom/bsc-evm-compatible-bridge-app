@@ -10,16 +10,21 @@ import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import RedoOutlined from '@ant-design/icons/RedoOutlined';
 import Image from 'src/components/Image';
-import { Button, message } from 'antd';
-import { formatAddress } from 'src/helpers/wallet';
+import Input from 'antd/lib/input';
+import Button from 'src/components/Button';
+import { formatAddress, getChainDataByChainId } from 'src/helpers/wallet';
 import ChooseNFTModalStyle from './style';
 import {
+  EmptyNftData,
   INFTParsedTokenAccount,
   NFTStandard,
   NFT_STANDARD_OPTIONS,
 } from 'src/interfaces/nft';
 import { useSetRecoilState } from 'recoil';
 import { nftState } from 'src/state/bridge';
+import contract721 from 'src/contract/erc721';
+import * as api from 'src/apis/nft';
+import { message } from 'antd';
 
 type ChooseNFTModalPropType = {
   visible: boolean;
@@ -35,8 +40,26 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   const { account, chainId } = useWeb3React();
   const [nftStandard, setNftStandard] = useState(NFTStandard.ERC_721);
   const [loading, setLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const [items, setItems] = useState<INFTParsedTokenAccount[]>([]);
+  const [isManual, setIsManual] = useState(false);
+  const [contractAddress, setContractAddress] = useState('');
+  const [tokenId, setTokenId] = useState<number | null>();
   const setNft = useSetRecoilState(nftState);
+
+  const clear = () => {
+    setContractAddress('');
+    setTokenId(null);
+    setIsManual(false);
+    setNftStandard(NFTStandard.ERC_721);
+    setLoading(false);
+    setConfirmLoading(false);
+  };
+
+  const onClose = () => {
+    onCancel();
+    clear();
+  };
 
   const fetchNFT = async () => {
     if (account && chainId) {
@@ -46,22 +69,60 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
           setItems(data);
           setLoading(false);
         })
-        .catch(() => {
+        .catch((error) => {
           setLoading(false);
-          message.error('something went wrong!');
+          console.error(error.response);
         });
     }
   };
 
   const onSelected = (item: INFTParsedTokenAccount) => {
     setNft(item);
-    onCancel();
+    onClose();
+  };
+
+  const confirmToken721 = async () => {
+    if (tokenId && contractAddress) {
+      const tokenUri = await contract721.getTokenUri(contractAddress, tokenId);
+      if (!tokenUri) return;
+      const data = await api.getDataFromTokenUri(tokenUri);
+      if (!data) {
+        message.error('Something went wrong');
+        return;
+      }
+      const nftData: INFTParsedTokenAccount = {
+        ...EmptyNftData,
+        tokenId: tokenId.toString(),
+        uri: tokenUri,
+        image: data.image,
+        nftName: data.name,
+        description: data.description,
+        walletAddress: account!,
+        contractAddress: contractAddress,
+        name: data.name,
+        standard: NFTStandard.ERC_721,
+        chain: getChainDataByChainId(chainId!).value,
+      };
+      setNft(nftData);
+      onClose();
+    }
+  };
+
+  const confirmToken1155 = () => {};
+
+  const confirmToken = async () => {
+    setConfirmLoading(true);
+    if (nftStandard === NFTStandard.ERC_721) {
+      await confirmToken721();
+    } else if (nftStandard === NFTStandard.ERC_1155) {
+      await confirmToken1155();
+    }
+    setConfirmLoading(false);
   };
 
   useEffect(() => {
     fetchNFT();
   }, [nftStandard, account, chainId]);
-  console.log(items);
 
   return (
     <ChooseNFTModalStyle
@@ -82,62 +143,115 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               style={{ padding: 0, height: 32, width: 32 }}
               shape='round'
               size='large'
+              hidden={isManual}
               onClick={fetchNFT}
             >
               <RedoOutlined />
             </Button>
           </div>
+          <Button
+            type='link'
+            className='manual-button'
+            hidden={isManual}
+            onClick={() => setIsManual(true)}
+          >
+            Add token manually
+          </Button>
         </>
       }
       visible={visible}
       onOk={onOk}
-      onCancel={onCancel}
+      onCancel={onClose}
       closeIcon={<CloseCircleOutlined />}
     >
-      <div
-        style={{
-          height: 400,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {loading ? (
-          <div className='loading-container'>
-            <LoadingOutlined />
-            <Title level={5}>Loading available tokens</Title>
-          </div>
-        ) : items.length > 0 ? (
-          <Row gutter={[0, 16]}>
-            {items.map((item) => (
-              <Col span={8} key={item.tokenId}>
-                <Card
-                  hoverable
-                  onClick={() => onSelected(item)}
-                  cover={
-                    <Image
-                      width={170}
-                      height={150}
-                      alt={item.name!}
-                      src={item.image!}
-                    />
-                  }
-                >
-                  <Title level={5} ellipsis>
-                    {item.name}
-                  </Title>
-                  <Title level={5}>#{item.tokenId}</Title>
-                  <p>{formatAddress(item.contractAddress, 4)}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          <Title level={2} style={{ color: '#a3a3a3' }}>
-            No Data
-          </Title>
-        )}
-      </div>
+      {isManual ? (
+        <Row className='manual-container' gutter={[0, 16]}>
+          <Col span={7}>
+            <p>Token Address: </p>
+          </Col>
+          <Col span={17}>
+            <Input onChange={(e) => setContractAddress(e.target.value)} />
+          </Col>
+          <Col span={7}>
+            <p>Token ID: </p>
+          </Col>
+          <Col span={17}>
+            <Input
+              type='number'
+              onChange={(e) => setTokenId(Number(e.target.value))}
+            />
+          </Col>
+          <Col span={13}></Col>
+          <Col span={5}>
+            <Button
+              type='primary'
+              danger
+              block
+              shape='round'
+              onClick={() => setIsManual(false)}
+            >
+              Cancel
+            </Button>
+          </Col>
+          <Col span={1}></Col>
+          <Col span={5}>
+            <Button
+              type='primary'
+              block
+              shape='round'
+              onClick={confirmToken}
+              loading={confirmLoading}
+            >
+              Confirm
+            </Button>
+          </Col>
+        </Row>
+      ) : (
+        <div
+          style={{
+            height: 400,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {loading ? (
+            <div className='loading-container'>
+              <LoadingOutlined />
+              <Title level={5}>Loading available tokens</Title>
+            </div>
+          ) : items.length > 0 ? (
+            <Row gutter={[0, 16]} className='image-container'>
+              {items.map((item) => (
+                <Col span={8} key={item.tokenId}>
+                  <Card
+                    hoverable
+                    onClick={() => onSelected(item)}
+                    cover={
+                      <Image
+                        width={170}
+                        height={150}
+                        alt={item.name!}
+                        src={item.image!}
+                      />
+                    }
+                  >
+                    <Title level={5} ellipsis>
+                      {item.name}
+                    </Title>
+                    <Title level={5}>#{item.tokenId}</Title>
+                    <p>{formatAddress(item.contractAddress, 4)}</p>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <Title level={2} style={{ color: '#a3a3a3' }}>
+              No Data
+            </Title>
+          )}
+        </div>
+      )}
     </ChooseNFTModalStyle>
   );
 };

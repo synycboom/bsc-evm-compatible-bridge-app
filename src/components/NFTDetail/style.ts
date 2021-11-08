@@ -24,11 +24,17 @@ const NFTDetailStyle = styled.div`
   .action-container {
     margin-top: 32px;
     display: flex;
-    justify-content: right;
+    flex-direction: column;
+    align-items: flex-end;
 
     .ant-btn {
       width: 150px;
     }
+  }
+
+  .register-info {
+    margin-top: 8px;
+    color: red;
   }
 `;
 export default NFTDetailStyle;

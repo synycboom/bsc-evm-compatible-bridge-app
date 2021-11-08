@@ -37,22 +37,16 @@ const BridgePageStyle = styled.div`
   .ant-input {
     height: 40px;
   }
-  .ant-btn {
-    font-weight: bold;
-    height: 40px;
-
-    &.ant-btn-round {
-      border-radius: 16px;
-    }
-
-    &.blue {
-      background: #3fafac;
-      border-color: #3fafac;
-    }
-  }
 
   .ant-steps-item-content {
     padding: 0px 8px;
+  }
+
+  .ant-alert {
+    border-radius: 12px;
+  }
+  .transfer-token-info {
+    margin-top: 16px;
   }
 `;
 export default BridgePageStyle;
