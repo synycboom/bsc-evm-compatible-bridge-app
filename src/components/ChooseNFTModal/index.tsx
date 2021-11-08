@@ -51,7 +51,6 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
 
   const clear = () => {
     setContractAddress('');
-    setAmount(0);
     setTokenId(null);
     setIsManual(false);
     setNftStandard(NFTStandard.ERC_721);
