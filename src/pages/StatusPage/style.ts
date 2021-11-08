@@ -7,7 +7,7 @@ const StatusPage = styled.div`
   }
   .connect-wallet-container {
     display: flex;
-    padding-bottom: 16 px;
+    padding-bottom: 16px;
     justify-content: flex-end;
     .ant-btn {
       width: 240px;
