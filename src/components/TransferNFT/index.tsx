@@ -15,7 +15,7 @@ import TransferNFTStyle from './style';
 import { bridgeAddressState, nftState } from 'src/state/bridge';
 import { useRecoilValue } from 'recoil';
 import { useEffect, useState } from 'react';
-import { getTransferStatus } from 'src/apis/nft';
+import { getTransferStatus, get1155TransferStatus } from 'src/apis/nft';
 import { TransferStatus } from 'src/helpers/nft';
 import TransferStatusLabel from '../TransferStatusLabel';
 import { NFTStandard } from 'src/interfaces/nft';
@@ -37,13 +37,18 @@ const TransferNFT: React.FC = () => {
   const chainData = getChainDataByChainId(chainList, chainId);
 
   const checkStatus = async () => {
-    const status = await getTransferStatus(walletAddress, txHash);
+    let status;
+    if (standard === NFTStandard.ERC_721) {
+      status = await getTransferStatus(walletAddress, txHash);
+    } else {
+      status = await get1155TransferStatus(walletAddress, txHash);
+    }
     setTransferStatus(status);
   };
 
   useEffect(() => {
     if (transferStatus === TransferStatus.InProgress) {
-      const interval = setInterval(checkStatus, 1000);
+      const interval = setInterval(checkStatus, 5000);
       return () => clearInterval(interval);
     }
   }, [transferStatus]);

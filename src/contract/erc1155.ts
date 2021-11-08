@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { getContract } from '.';
 import erc1155Abi from './abi/erc1155';
+import erc1155Agent from './abi/erc1155Agent';
 
 class Contract1155 {
   async getApprove(
@@ -32,12 +33,12 @@ class Contract1155 {
             operator.toLowerCase() === contractAddress.toLowerCase() &&
             approved
           ) {
-            contract.removeAllListeners('Approval');
+            contract.removeAllListeners('ApprovalForAll');
             reslove(true);
           }
         });
       } catch {
-        contract.removeAllListeners('Approval');
+        contract.removeAllListeners('ApprovalForAll');
         reslove(false);
       }
     });
@@ -63,8 +64,13 @@ class Contract1155 {
     targetChainId: number
   ): Promise<boolean> {
     return new Promise(async (reslove) => {
-      const contract = getContract(agentAddress, erc1155Abi);
+      const contract = getContract(agentAddress, erc1155Agent);
       try {
+        const response = await contract.registerSwapPair(
+          tokenAddress,
+          targetChainId
+        );
+        console.info('tx: ', response.hash);
         contract.on(
           'SwapPairRegister',
           (sponsor, _tokenAddress, toChainId, feeAmount) => {
@@ -73,12 +79,8 @@ class Contract1155 {
             contract.removeAllListeners('SwapPairRegister');
           }
         );
-        const response = await contract.registerSwapPair(
-          tokenAddress,
-          targetChainId
-        );
-        console.info('tx: ', response.hash);
-      } catch {
+      } catch (error) {
+        console.log(error);
         contract.removeAllListeners('SwapPairRegister');
         reslove(false);
       }
@@ -93,7 +95,7 @@ class Contract1155 {
     amounts: number,
     targetChainId: number
   ): Promise<string> {
-    const contract = getContract(agentAddress, erc1155Abi);
+    const contract = getContract(agentAddress, erc1155Agent);
     try {
       const response = await contract.swap(
         tokenAddress,

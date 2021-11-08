@@ -12,5 +12,7 @@ export default {
   // ETH_CHAIN_ID: 1000,
   // BSC_CHAIN_ID: 2000,
   COVALENT_API_KEY: requireEnv('REACT_APP_COVALENT_API_KEY'),
-  API_URL: requireEnv('REACT_APP_API_URL'),
+  API_URL: 'https://bridge-api.synycboom.com',
+  // API_URL: 'http://localhost:8080',
+  // API_URL: requireEnv('REACT_APP_API_URL'),
 };

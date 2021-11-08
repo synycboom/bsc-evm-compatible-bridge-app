@@ -66,6 +66,21 @@ export const getIsNftRegistered = async (
   );
 };
 
+export const getIsNft1155Registered = async (
+  chainId: number,
+  targetChainId: number,
+  tokenAddress: string
+): Promise<boolean> => {
+  const forwardUrl = `${setting.API_URL}/v1/erc-1155-swap-pairs?available=true&src_chain_id=${chainId}&dst_chain_id=${targetChainId}&src_token_addr=${tokenAddress}&limit=1`;
+  const backwardUrl = `${setting.API_URL}/v1/erc-1155-swap-pairs?available=true&dst_chain_id=${chainId}&src_chain_id=${targetChainId}&dst_token_addr=${tokenAddress}&limit=1`;
+  const forwardResponse = await axios.get<{ pairs: [] }>(forwardUrl);
+  const backwardResponse = await axios.get<{ pairs: [] }>(backwardUrl);
+  return (
+    forwardResponse.data.pairs.length > 0 ||
+    backwardResponse.data.pairs.length > 0
+  );
+};
+
 export const getDataFromTokenUri = async (
   tokenUri: string
 ): Promise<{
@@ -101,8 +116,33 @@ export const getTransferStatus = async (
     const response = await axios.get<{ erc_721_swaps: Array<any> }>(url);
     const transactionData = response.data.erc_721_swaps[0];
     if (!transactionData) {
-      message.error('Cannot find transaction data!');
+      return TransferStatus.InProgress;
+    }
+
+    const { state } = transactionData;
+
+    if (state === SwapState.FillTxConfirmed) {
+      return TransferStatus.Done;
+    } else if (ERROR_STATE.includes(state)) {
       return TransferStatus.Error;
+    }
+    return TransferStatus.InProgress;
+  } catch (error) {
+    console.error(error);
+    return TransferStatus.Error;
+  }
+};
+
+export const get1155TransferStatus = async (
+  sender: string,
+  txHash: string
+): Promise<TransferStatus> => {
+  const url = `${setting.API_URL}/v1/erc-1155-swaps?limit=1&sender=${sender}&request_tx_hash=${txHash}`;
+  try {
+    const response = await axios.get<{ erc_1155_swaps: Array<any> }>(url);
+    const transactionData = response.data.erc_1155_swaps[0];
+    if (!transactionData) {
+      return TransferStatus.InProgress;
     }
 
     const { state } = transactionData;

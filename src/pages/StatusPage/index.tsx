@@ -4,7 +4,11 @@ import Tooltip from 'antd/lib/tooltip';
 import { useEffect, useState } from 'react';
 import { getTransferStatusList } from 'src/apis/nft';
 import PageLayout from 'src/components/PageLayout';
-import { formatAddress, getChainDataByChainId } from 'src/helpers/wallet';
+import {
+  formatAddress,
+  getChainDataByChainId,
+  useChainList,
+} from 'src/helpers/wallet';
 import dayjs from 'dayjs';
 import { getNFTStatusFromState, SwapState } from 'src/helpers/nft';
 import TransferStatusLabel from 'src/components/TransferStatusLabel';
@@ -28,71 +32,126 @@ const AddressTooltip = ({ text, children }: any) => {
   );
 };
 
-const columns = [
-  {
-    title: 'Sender',
-    dataIndex: 'sender',
-    key: 'sender',
-    render: (text: string, record: any) => (
-      <AddressTooltip text={text}>
-        {formatAddress(text, 6)}
-        <br />({getChainDataByChainId(record.src_chain_id)?.name})
-      </AddressTooltip>
-    ),
-  },
-  {
-    title: 'Recipient',
-    dataIndex: 'recipient',
-    key: 'recipient',
-    render: (text: string, record: any) => (
-      <AddressTooltip text={text}>
-        {formatAddress(text, 6)}
-        <br />({getChainDataByChainId(record.dst_chain_id)?.name})
-      </AddressTooltip>
-    ),
-  },
-  {
-    title: 'Token Address',
-    dataIndex: 'src_token_addr',
-    key: 'src_token_addr',
-    render: (text: string) => (
-      <AddressTooltip text={text}>{formatAddress(text, 6)}</AddressTooltip>
-    ),
-  },
-  {
-    title: 'Token ID',
-    dataIndex: 'token_id',
-    key: 'token_id',
-  },
-  {
-    title: 'Amounts',
-    dataIndex: 'amounts',
-    key: 'amounts',
-  },
-  {
-    title: 'Transfer at',
-    dataIndex: 'created_at',
-    key: 'created_at',
-    render: (text: string) => (
-      <span>{dayjs(text).format('DD/MM/YYYY HH:mm:ss')}</span>
-    ),
-  },
-  {
-    title: 'Status',
-    dataIndex: 'state',
-    key: 'state',
-    render: (state: SwapState) => (
-      <TransferStatusLabel status={getNFTStatusFromState(state)} />
-    ),
-  },
-];
-
 const StatusPage: React.FC = () => {
   const { account } = useWeb3React();
+  const chainList = useChainList();
 
   const [data721, setData721] = useState([]);
   const [data1155, setData1155] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const columns721 = [
+    {
+      title: 'Sender',
+      dataIndex: 'sender',
+      key: 'sender',
+      render: (text: string, record: any) => (
+        <AddressTooltip text={text}>
+          {formatAddress(text, 6)}
+          <br />({getChainDataByChainId(chainList, record.src_chain_id)?.name})
+        </AddressTooltip>
+      ),
+    },
+    {
+      title: 'Recipient',
+      dataIndex: 'recipient',
+      key: 'recipient',
+      render: (text: string, record: any) => (
+        <AddressTooltip text={text}>
+          {formatAddress(text, 6)}
+          <br />({getChainDataByChainId(chainList, record.dst_chain_id)?.name})
+        </AddressTooltip>
+      ),
+    },
+    {
+      title: 'Token Address',
+      dataIndex: 'src_token_addr',
+      key: 'src_token_addr',
+      render: (text: string) => (
+        <AddressTooltip text={text}>{formatAddress(text, 6)}</AddressTooltip>
+      ),
+    },
+    {
+      title: 'Token ID',
+      dataIndex: 'token_id',
+      key: 'token_id',
+    },
+    {
+      title: 'Transfer at',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text: string) => (
+        <span>{dayjs(text).format('DD/MM/YYYY HH:mm:ss')}</span>
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'state',
+      key: 'state',
+      render: (state: SwapState) => (
+        <TransferStatusLabel status={getNFTStatusFromState(state)} />
+      ),
+    },
+  ];
+
+  const columns1155 = [
+    {
+      title: 'Sender',
+      dataIndex: 'sender',
+      key: 'sender',
+      render: (text: string, record: any) => (
+        <AddressTooltip text={text}>
+          {formatAddress(text, 6)}
+          <br />({getChainDataByChainId(chainList, record.src_chain_id)?.name})
+        </AddressTooltip>
+      ),
+    },
+    {
+      title: 'Recipient',
+      dataIndex: 'recipient',
+      key: 'recipient',
+      render: (text: string, record: any) => (
+        <AddressTooltip text={text}>
+          {formatAddress(text, 6)}
+          <br />({getChainDataByChainId(chainList, record.dst_chain_id)?.name})
+        </AddressTooltip>
+      ),
+    },
+    {
+      title: 'Token Address',
+      dataIndex: 'src_token_addr',
+      key: 'src_token_addr',
+      render: (text: string) => (
+        <AddressTooltip text={text}>{formatAddress(text, 6)}</AddressTooltip>
+      ),
+    },
+    {
+      title: 'Token ID',
+      dataIndex: 'token_id',
+      key: 'token_id',
+    },
+    {
+      title: 'Amounts',
+      dataIndex: 'amounts',
+      key: 'amounts',
+    },
+    {
+      title: 'Transfer at',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text: string) => (
+        <span>{dayjs(text).format('DD/MM/YYYY HH:mm:ss')}</span>
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'state',
+      key: 'state',
+      render: (state: SwapState) => (
+        <TransferStatusLabel status={getNFTStatusFromState(state)} />
+      ),
+    },
+  ];
 
   useEffect(() => {
     if (account) {
@@ -124,7 +183,7 @@ const StatusPage: React.FC = () => {
         <Table
           loading={loading}
           pagination={false}
-          columns={columns}
+          columns={columns721}
           dataSource={data721}
         />
         <br />
@@ -133,7 +192,7 @@ const StatusPage: React.FC = () => {
         <Table
           loading={loading}
           pagination={false}
-          columns={columns}
+          columns={columns1155}
           dataSource={data1155}
         />
       </PageLayout>

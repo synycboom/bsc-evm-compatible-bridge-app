@@ -111,6 +111,7 @@ class Contract721 {
         Number(tokenId),
         targetChainId
       );
+      console.log('tx: ', response.hash);
       return response.hash;
     } catch (error) {
       console.error(error);
