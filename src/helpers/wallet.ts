@@ -33,7 +33,7 @@ export const getChainData = (chain: Chain): ChainData => {
 
 export const getChainDataByChainId = (chainId?: number): ChainData => {
   const chainList = getChainList();
-  return chainList.find((item) => item.id === chainId)!;
+  return chainList.find((item) => item.id === Number(chainId))!;
 };
 
 export const getChainId = (chain: Chain): number => {

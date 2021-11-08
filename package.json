@@ -17,6 +17,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "antd": "^4.16.13",
     "axios": "^0.23.0",
+    "dayjs": "^1.10.7",
     "ethers": "^5.5.1",
     "husky": "^7.0.2",
     "lint-staged": "^11.2.3",

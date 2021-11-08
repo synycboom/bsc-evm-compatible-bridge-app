@@ -1,5 +1,12 @@
+import { message } from 'antd';
 import axios from 'axios';
-import { parseNFTData } from 'src/helpers/nft';
+import { serializeQueryString } from 'src/helpers';
+import {
+  ERROR_STATE,
+  parseNFTData,
+  SwapState,
+  TransferStatus,
+} from 'src/helpers/nft';
 import { getChainDataByChainId } from 'src/helpers/wallet';
 import { INFTParsedTokenAccount, NFTStandard } from 'src/interfaces/nft';
 import setting from 'src/setting';
@@ -85,4 +92,42 @@ export const getDataFromTokenUri = async (
       description: '',
     };
   }
+};
+
+export const getTransferStatus = async (
+  sender: string,
+  txHash: string
+): Promise<TransferStatus> => {
+  const url = `${setting.API_URL}/v1/erc-721-swaps?limit=1&sender=${sender}&request_tx_hash=${txHash}`;
+  try {
+    const response = await axios.get<{ erc_721_swaps: Array<any> }>(url);
+    const transactionData = response.data.erc_721_swaps[0];
+    if (!transactionData) {
+      message.error('Cannot find transaction data!');
+      return TransferStatus.Error;
+    }
+
+    const { state } = transactionData;
+
+    if (state === SwapState.FillTxConfirmed) {
+      return TransferStatus.Done;
+    } else if (ERROR_STATE.includes(state)) {
+      return TransferStatus.Error;
+    }
+    return TransferStatus.InProgress;
+  } catch (error) {
+    console.log(error);
+    return TransferStatus.Error;
+  }
+};
+
+export const getTransferStatusList = async (
+  sender: string,
+  query: Record<string, string> = {}
+) => {
+  const url = `${
+    setting.API_URL
+  }/v1/erc-721-swaps?sender=${sender}&${serializeQueryString(query)}`;
+  const response = await axios.get<{ erc_721_swaps: Array<any> }>(url);
+  return response.data.erc_721_swaps;
 };

@@ -58,25 +58,30 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     }
   };
 
-  async function checkNftStatus() {
-    const isRegister = await getIsNftRegistered(
-      getChainId(bridgeAddress.sourceChain!),
-      getChainId(bridgeAddress.targetChain!),
-      tokenAddress
+  const checkIsApproved = async () => {
+    const isApproved = await contractErc721.getApprove(
+      chainData.swapAgentAddress,
+      tokenAddress,
+      tokenId!
     );
-    if (isRegister) {
-      setNftStatus(NftStatus.Ready);
-    } else {
-      const isApproved = await contractErc721.getApprove(
-        chainData.swapAgentAddress,
-        tokenAddress,
-        tokenId!
+    return isApproved;
+  };
+
+  async function checkNftStatus() {
+    const isApproved = await checkIsApproved();
+    if (isApproved) {
+      const isRegister = await getIsNftRegistered(
+        getChainId(bridgeAddress.sourceChain!),
+        getChainId(bridgeAddress.targetChain!),
+        tokenAddress
       );
-      if (isApproved) {
-        setNftStatus(NftStatus.NotRegister);
+      if (isRegister) {
+        setNftStatus(NftStatus.Ready);
       } else {
-        setNftStatus(NftStatus.NotApprove);
+        setNftStatus(NftStatus.NotRegister);
       }
+    } else {
+      setNftStatus(NftStatus.NotApprove);
     }
   }
 

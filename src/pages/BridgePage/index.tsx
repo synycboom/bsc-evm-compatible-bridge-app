@@ -91,7 +91,7 @@ const BridgePage: React.FC = () => {
             description={
               <div className='box'>
                 <p>
-                  <b>Transfer NFT to Bridge</b>
+                  <b>Transfer NFT throught Bridge</b>
                 </p>
                 {step === 2 && <TransferNFT />}
               </div>

@@ -105,7 +105,7 @@ class Contract721 {
     recipient: string,
     tokenId: number | string,
     targetChainId: number
-  ): Promise<boolean> {
+  ): Promise<string> {
     const contract = getContract(agentAddress, erc721AgentAbi);
     console.log(tokenAddress, recipient, Number(tokenId), targetChainId);
     try {
@@ -115,10 +115,10 @@ class Contract721 {
         Number(tokenId),
         targetChainId
       );
-      console.log('tx: ', response.hash);
-      return true;
-    } catch {
-      return false;
+      return response.hash;
+    } catch (error) {
+      console.log(error);
+      return '';
     }
   }
 }

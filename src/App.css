@@ -12,6 +12,8 @@ p {
 }
 
 .ant-select-selector,
-.ant-input {
+.ant-input,
+.ant-message-notice-content,
+.ant-tag {
   border-radius: 8px !important;
 }

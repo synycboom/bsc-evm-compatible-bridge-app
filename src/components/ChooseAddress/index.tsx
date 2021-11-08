@@ -17,10 +17,10 @@ import {
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
 import { bridgeAddressState } from 'src/state/bridge';
 import { useRecoilState } from 'recoil';
-import { InjectedConnector } from '@web3-react/injected-connector';
 
 import ChooseAddressStyle from './style';
 import { message } from 'antd';
+import ConnectWalletButton from '../ConnectWalletButton';
 
 const { Option } = Select;
 
@@ -29,30 +29,10 @@ type ChooseAccountPropType = {
   next: () => void;
 };
 
-export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 56, 97, 1000, 2000],
-});
-
 const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
   const CHAIN_LIST = getChainList();
   const [bridgeAddress, setBridgeAddress] = useRecoilState(bridgeAddressState);
-  const { account, activate, deactivate, chainId } = useWeb3React();
-
-  const connect = async () => {
-    try {
-      await activate(injected);
-    } catch (ex) {
-      console.log(ex);
-    }
-  };
-
-  const disconnect = async () => {
-    try {
-      deactivate();
-    } catch (ex) {
-      console.log(ex);
-    }
-  };
+  const { account, chainId } = useWeb3React();
 
   const validate = (): boolean => {
     if (
@@ -119,17 +99,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   </Select>
                   <div />
                   <Title level={5}>Source Address</Title>
-                  <Button
-                    type='primary'
-                    className='blue'
-                    block
-                    shape='round'
-                    onClick={account ? disconnect : connect}
-                  >
-                    {account
-                      ? `disconnect ${formatAddress(account, 5)}`
-                      : 'Connect Wallet'}
-                  </Button>
+                  <ConnectWalletButton block={true} />
                 </Space>
               </Col>
               <Col span={2} className='arrow-container'>
