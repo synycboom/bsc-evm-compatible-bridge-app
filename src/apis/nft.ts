@@ -7,7 +7,6 @@ import {
   SwapState,
   TransferStatus,
 } from 'src/helpers/nft';
-import { getChainDataByChainId } from 'src/helpers/wallet';
 import { INFTParsedTokenAccount, NFTStandard } from 'src/interfaces/nft';
 import setting from 'src/setting';
 
@@ -47,8 +46,7 @@ export const getNFTList = async (
         item.nft_data &&
         item.supports_erc?.includes(nftStandard)
     );
-    const chainData = getChainDataByChainId(chainId);
-    return parseNFTData(address, items, nftStandard, chainData.value!);
+    return parseNFTData(address, items, nftStandard, chainId);
   }
   return [];
 };
@@ -116,7 +114,7 @@ export const getTransferStatus = async (
     }
     return TransferStatus.InProgress;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return TransferStatus.Error;
   }
 };
@@ -125,9 +123,16 @@ export const getTransferStatusList = async (
   sender: string,
   query: Record<string, string> = {}
 ) => {
-  const url = `${
+  const url721 = `${
     setting.API_URL
   }/v1/erc-721-swaps?sender=${sender}&${serializeQueryString(query)}`;
-  const response = await axios.get<{ erc_721_swaps: Array<any> }>(url);
-  return response.data.erc_721_swaps;
+  const response721 = await axios.get<{ erc_721_swaps: Array<any> }>(url721);
+  const url1155 = `${
+    setting.API_URL
+  }/v1/erc-1155-swaps?sender=${sender}&${serializeQueryString(query)}`;
+  const response1155 = await axios.get<{ erc_1155_swaps: Array<any> }>(url1155);
+  return {
+    list721: response721.data.erc_721_swaps,
+    list1155: response1155.data.erc_1155_swaps,
+  };
 };

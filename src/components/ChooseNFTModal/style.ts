@@ -100,5 +100,17 @@ const ChooseNFTModalStyle = styled(Modal)`
       border-radius: 0px 10px 10px 0px;
     }
   }
+
+  .token-amount-container {
+    margin-top: 16px;
+
+    span {
+      font-weight: bold;
+    }
+    .token-amount-input {
+      width: 200px;
+      margin-left: 8px;
+    }
+  }
 `;
 export default ChooseNFTModalStyle;

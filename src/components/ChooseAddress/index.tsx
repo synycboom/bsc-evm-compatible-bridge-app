@@ -9,10 +9,9 @@ import Button from 'src/components/Button';
 import { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import {
-  formatAddress,
   getChainData,
-  getChainList,
   requestChangeNetwork,
+  useChainList,
 } from 'src/helpers/wallet';
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
 import { bridgeAddressState } from 'src/state/bridge';
@@ -30,7 +29,7 @@ type ChooseAccountPropType = {
 };
 
 const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
-  const CHAIN_LIST = getChainList();
+  const chainList = useChainList();
   const [bridgeAddress, setBridgeAddress] = useRecoilState(bridgeAddressState);
   const { account, chainId } = useWeb3React();
 
@@ -91,7 +90,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                       });
                     }}
                   >
-                    {CHAIN_LIST.map((chainItem) => (
+                    {chainList.map((chainItem) => (
                       <Option value={chainItem.value} key={chainItem.id}>
                         <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
                       </Option>
@@ -123,7 +122,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                       });
                     }}
                   >
-                    {CHAIN_LIST.map((chainItem) => (
+                    {chainList.map((chainItem) => (
                       <Option value={chainItem.value} key={chainItem.id}>
                         <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
                       </Option>
@@ -165,11 +164,11 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
             <p className='address-detail'>
               From:{' '}
               <span className='address'>{bridgeAddress.sourceAddress}</span> (
-              {getChainData(bridgeAddress.sourceChain!)?.name})
+              {getChainData(chainList, bridgeAddress.sourceChain!)?.name})
             </p>
             <p className='address-detail'>
               To: <span className='address'>{bridgeAddress.targetAddress}</span>{' '}
-              ({getChainData(bridgeAddress.targetChain!)?.name})
+              ({getChainData(chainList, bridgeAddress.targetChain!)?.name})
             </p>
           </div>
         )}

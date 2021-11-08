@@ -13,5 +13,9 @@ const StatusPage = styled.div`
       width: 240px;
     }
   }
+
+  .ant-table-thead .ant-table-cell {
+    font-weight: bold;
+  }
 `;
 export default StatusPage;

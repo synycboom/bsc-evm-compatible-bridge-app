@@ -11,8 +11,7 @@ class Contract721 {
   ) {
     const contract = getContract(tokenAddress, erc721Abi);
     const approvedContract = await contract.getApproved(Number(tokenId));
-    console.log(approvedContract, contractAddress);
-    return approvedContract === contractAddress;
+    return approvedContract.toLowerCase() === contractAddress.toLowerCase();
   }
 
   async approve(
@@ -27,16 +26,15 @@ class Contract721 {
           contractAddress,
           Number(tokenId)
         );
-        console.log(response.hash);
+        console.info(response.hash);
         contract.on('Approval', (owner, approved, _tokenId) => {
           if (
-            approved === contractAddress &&
+            approved.toLowerCase() === contractAddress.toLowerCase() &&
             Number(tokenId) === _tokenId.toNumber()
           ) {
             contract.removeAllListeners('Approval');
             reslove(true);
           }
-          console.log(owner, approved, _tokenId);
         });
       } catch {
         contract.removeAllListeners('Approval');
@@ -74,8 +72,7 @@ class Contract721 {
             toChainId,
             feeAmount
           ) => {
-            console.log('SwapPairRegister');
-            console.log(
+            console.info(
               sponsor,
               _tokenAddress,
               tokenName,
@@ -91,7 +88,7 @@ class Contract721 {
           tokenAddress,
           targetChainId
         );
-        console.log('tx: ', response.hash);
+        console.info('tx: ', response.hash);
       } catch {
         contract.removeAllListeners('SwapPairRegister');
         reslove(false);
@@ -107,7 +104,6 @@ class Contract721 {
     targetChainId: number
   ): Promise<string> {
     const contract = getContract(agentAddress, erc721AgentAbi);
-    console.log(tokenAddress, recipient, Number(tokenId), targetChainId);
     try {
       const response = await contract.swap(
         tokenAddress,
@@ -117,7 +113,7 @@ class Contract721 {
       );
       return response.hash;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return '';
     }
   }

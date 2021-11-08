@@ -65,6 +65,11 @@ const columns = [
     key: 'token_id',
   },
   {
+    title: 'Amounts',
+    dataIndex: 'amounts',
+    key: 'amounts',
+  },
+  {
     title: 'Transfer at',
     dataIndex: 'created_at',
     key: 'created_at',
@@ -85,13 +90,24 @@ const columns = [
 const StatusPage: React.FC = () => {
   const { account } = useWeb3React();
 
-  const [data, setData] = useState([]);
+  const [data721, setData721] = useState([]);
+  const [data1155, setData1155] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (account) {
-      getTransferStatusList(account).then((items: any) => setData(items));
+      setLoading(true);
+      const interval = setInterval(() => {
+        getTransferStatusList(account).then(({ list721, list1155 }: any) => {
+          setData721(list721);
+          setData1155(list1155);
+          setLoading(false);
+        });
+      }, 2000);
+      return () => clearInterval(interval);
     } else {
-      setData([]);
+      setData721([]);
+      setData1155([]);
     }
   }, [account]);
 
@@ -104,7 +120,22 @@ const StatusPage: React.FC = () => {
         <div className='connect-wallet-container'>
           <ConnectWalletButton />
         </div>
-        <Table pagination={false} columns={columns} dataSource={data} />
+        <Title level={4}>ERC-721</Title>
+        <Table
+          loading={loading}
+          pagination={false}
+          columns={columns}
+          dataSource={data721}
+        />
+        <br />
+        <br />
+        <Title level={4}>ERC-1155</Title>
+        <Table
+          loading={loading}
+          pagination={false}
+          columns={columns}
+          dataSource={data1155}
+        />
       </PageLayout>
     </StatusPageStyle>
   );

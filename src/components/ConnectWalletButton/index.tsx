@@ -14,7 +14,7 @@ const ConnectWalletButton = ({ block }: any) => {
     try {
       await activate(injected);
     } catch (ex) {
-      console.log(ex);
+      console.error(ex);
     }
   };
 
@@ -22,7 +22,7 @@ const ConnectWalletButton = ({ block }: any) => {
     try {
       deactivate();
     } catch (ex) {
-      console.log(ex);
+      console.error(ex);
     }
   };
   return (

@@ -1,38 +1,87 @@
 import { message } from 'antd';
-import { ethers } from 'ethers';
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { getInfo } from 'src/apis/info';
 import { Chain, ChainData } from 'src/interfaces/nft';
 import setting from 'src/setting';
+import { chainListState, infoState } from 'src/state/info';
 
-export const getChainList = () => {
-  return [
-    {
-      id: Number(setting.ETH_CHAIN_ID),
-      name: 'Ethereum',
-      value: Chain.ETHEREUM,
-      registerFee: 0.02,
-      bridgeFee: 0.04,
-      currency: 'ETH',
-      swapAgentAddress: setting.ETH_SWAP_AGENT_CONTRACT,
-    },
-    {
-      id: Number(setting.BSC_CHAIN_ID),
-      name: 'Binance Smart Chain',
-      value: Chain.BSC,
-      registerFee: 0.02,
-      bridgeFee: 0.04,
-      currency: 'BNB',
-      swapAgentAddress: setting.BSC_SWAP_AGENT_CONTRACT,
-    },
-  ];
+export const useChainList = () => {
+  const [info, setInfo] = useRecoilState(infoState);
+  const [chainList, setChainList] = useRecoilState(chainListState);
+
+  useEffect(() => {
+    if (!info) {
+      getInfo().then((data) => {
+        setInfo(data);
+      });
+    } else {
+      setChainList([
+        {
+          id: info.eth_chain_id,
+          name: 'Ethereum',
+          value: Chain.ETHEREUM,
+          registerFee: 0.02,
+          bridgeFee: 0.04,
+          currency: 'ETH',
+          swapAgent721Address: info.eth_erc_721_swap_agent,
+          swapAgent1155Address: info.eth_erc_1155_swap_agent,
+        },
+        {
+          id: info.bsc_chain_id,
+          name: 'Binance Smart Chain',
+          value: Chain.BSC,
+          registerFee: 0.02,
+          bridgeFee: 0.04,
+          currency: 'BNB',
+          swapAgent721Address: info.bsc_erc_721_swap_agent,
+          swapAgent1155Address: info.bsc_erc_1155_swap_agent,
+        },
+      ]);
+    }
+  }, [info]);
+
+  return chainList;
 };
 
-export const getChainData = (chain: Chain): ChainData => {
-  const chainList = getChainList();
+// export const getChainList = () => {
+//   const info = JSON.parse(localStorage.getItem('info')!);
+
+//   return [
+//     {
+//       id: info.eth_chain_id,
+//       name: 'Ethereum',
+//       value: Chain.ETHEREUM,
+//       registerFee: 0.02,
+//       bridgeFee: 0.04,
+//       currency: 'ETH',
+//       swapAgent721Address: info.eth_erc_721_swap_agent,
+//       swapAgent1155Address: info.eth_erc_1155_swap_agent,
+//     },
+//     {
+//       id: info.bsc_chain_id,
+//       name: 'Binance Smart Chain',
+//       value: Chain.BSC,
+//       registerFee: 0.02,
+//       bridgeFee: 0.04,
+//       currency: 'BNB',
+//       swapAgent721Address: info.bsc_erc_721_swap_agent,
+//       swapAgent1155Address: info.bsc_erc_1155_swap_agent,
+//     },
+//   ];
+// };
+
+export const getChainData = (
+  chainList: Array<ChainData>,
+  chain: Chain
+): ChainData => {
   return chainList.find((item) => item.value === chain)!;
 };
 
-export const getChainDataByChainId = (chainId?: number): ChainData => {
-  const chainList = getChainList();
+export const getChainDataByChainId = (
+  chainList: Array<ChainData>,
+  chainId?: number
+): ChainData => {
   return chainList.find((item) => item.id === Number(chainId))!;
 };
 
@@ -75,13 +124,6 @@ export const requestChangeNetwork = async (chain: Chain): Promise<boolean> => {
     );
     return false;
   }
-};
-
-export const getSigner = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum!);
-  const signer = provider.getSigner();
-  console.log(await signer.getAddress());
-  console.log(ethers.utils.formatEther(await signer.getBalance()));
 };
 
 export const formatAddress = (address: string, showLength: number): string => {

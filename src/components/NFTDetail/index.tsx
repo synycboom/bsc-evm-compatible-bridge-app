@@ -7,13 +7,19 @@ import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
 import ExclamationCircleOutlined from '@ant-design/icons/ExclamationCircleOutlined';
 import { bridgeAddressState, nftState } from 'src/state/bridge';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getChainData, getChainId } from 'src/helpers/wallet';
+import {
+  getChainDataByChainId,
+  getChainId,
+  useChainList,
+} from 'src/helpers/wallet';
 import { getNFTStandard } from 'src/helpers/nft';
 import { useEffect, useState } from 'react';
 import { getIsNftRegistered } from 'src/apis/nft';
 import contractErc721 from 'src/contract/erc721';
+import contractErc1155 from 'src/contract/erc1155';
 import Alert from 'antd/lib/alert';
 import { message } from 'antd';
+import { NFTStandard } from 'src/interfaces/nft';
 import NFTDetailStyle from './style';
 
 enum NftStatus {
@@ -38,16 +44,17 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
   const [nft, setNft] = useRecoilState(nftState);
   const bridgeAddress = useRecoilValue(bridgeAddressState);
   const [nftStatus, setNftStatus] = useState<NftStatus>(NftStatus.Loading);
+  const chainList = useChainList();
   const {
     name,
     image,
     contractAddress: tokenAddress,
     tokenId,
-    chain,
+    chainId,
     standard,
+    walletAddress,
   } = nft!;
-  const chainData = getChainData(chain);
-
+  const chainData = getChainDataByChainId(chainList, chainId);
   const validate = (): boolean => {
     return true;
   };
@@ -59,12 +66,20 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
   };
 
   const checkIsApproved = async () => {
-    const isApproved = await contractErc721.getApprove(
-      chainData.swapAgentAddress,
-      tokenAddress,
-      tokenId!
-    );
-    return isApproved;
+    if (standard === NFTStandard.ERC_721) {
+      return contractErc721.getApprove(
+        chainData.swapAgent721Address,
+        tokenAddress,
+        tokenId!
+      );
+    } else if (standard === NFTStandard.ERC_1155) {
+      return contractErc1155.getApprove(
+        tokenAddress,
+        walletAddress,
+        chainData.swapAgent1155Address
+      );
+    }
+    return false;
   };
 
   async function checkNftStatus() {
@@ -87,11 +102,19 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
 
   const approve = async () => {
     setNftStatus(NftStatus.Loading);
-    const isApproved = await contractErc721.approve(
-      chainData.swapAgentAddress,
-      tokenAddress,
-      tokenId!
-    );
+    let isApproved;
+    if (standard === NFTStandard.ERC_721) {
+      isApproved = await contractErc721.approve(
+        chainData.swapAgent721Address,
+        tokenAddress,
+        tokenId!
+      );
+    } else if (standard === NFTStandard.ERC_1155) {
+      isApproved = await contractErc1155.approve(
+        chainData.swapAgent1155Address,
+        tokenAddress
+      );
+    }
     if (isApproved) {
       message.success('Approve NFT successfully');
       checkNftStatus();
@@ -102,11 +125,20 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
 
   const register = async () => {
     setNftStatus(NftStatus.Loading);
-    const isRegistered = await contractErc721.registerToken(
-      chainData.swapAgentAddress,
-      tokenAddress,
-      getChainId(bridgeAddress.targetChain!)
-    );
+    let isRegistered;
+    if (standard === NFTStandard.ERC_721) {
+      isRegistered = await contractErc721.registerToken(
+        chainData.swapAgent721Address,
+        tokenAddress,
+        getChainId(bridgeAddress.targetChain!)
+      );
+    } else if (standard === NFTStandard.ERC_1155) {
+      isRegistered = await contractErc1155.registerToken(
+        chainData.swapAgent1155Address,
+        tokenAddress,
+        getChainId(bridgeAddress.targetChain!)
+      );
+    }
     if (isRegistered) {
       setNftStatus(NftStatus.Ready);
       message.success('Register NFT successfully');

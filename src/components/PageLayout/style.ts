@@ -36,6 +36,9 @@ const LayoutStyle = styled.div`
 
   .ant-page-header-heading-extra {
     margin-left: 48px;
+    .ant-btn {
+      margin: 0px;
+    }
   }
   .ant-btn-link {
     font-weight: bold;

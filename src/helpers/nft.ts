@@ -1,7 +1,6 @@
 import { formatUnits } from 'ethers/lib/utils';
 import { getDataFromTokenUri } from 'src/apis/nft';
 import {
-  Chain,
   CovalentData,
   INFTParsedTokenAccount,
   NFTStandard,
@@ -13,7 +12,7 @@ export const parseNFTData = async (
   walletAddress: string,
   tokenList: CovalentData[],
   standard: NFTStandard,
-  chain: Chain
+  chainId: number
 ): Promise<INFTParsedTokenAccount[]> => {
   const tokens = tokenList.reduce((arr, covalent) => {
     if (covalent.nft_data) {
@@ -42,7 +41,7 @@ export const parseNFTData = async (
           nftName: data.external_data.name,
           description: data.external_data.description,
           standard,
-          chain,
+          chainId,
         })
       );
     }

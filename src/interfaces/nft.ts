@@ -39,7 +39,8 @@ export interface INFTParsedTokenAccount {
   logo?: string;
   isNativeAsset?: boolean;
   standard: NFTStandard;
-  chain: Chain;
+  chain?: Chain;
+  chainId: number;
 }
 
 export const EmptyNftData: INFTParsedTokenAccount = {
@@ -60,6 +61,7 @@ export const EmptyNftData: INFTParsedTokenAccount = {
   name: '',
   standard: NFTStandard.ERC_721,
   chain: Chain.ETHEREUM,
+  chainId: 0,
 };
 
 export type CovalentNFTExternalData = {
@@ -100,5 +102,15 @@ export type ChainData = {
   registerFee: number;
   bridgeFee: number;
   currency: string;
-  swapAgentAddress: string;
+  swapAgent721Address: string;
+  swapAgent1155Address: string;
+};
+
+export type InfoData = {
+  bsc_erc_1155_swap_agent: string;
+  bsc_erc_721_swap_agent: string;
+  eth_erc_1155_swap_agent: string;
+  eth_erc_721_swap_agent: string;
+  eth_chain_id: number;
+  bsc_chain_id: number;
 };

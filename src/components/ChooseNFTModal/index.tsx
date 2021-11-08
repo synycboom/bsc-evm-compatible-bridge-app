@@ -12,7 +12,7 @@ import RedoOutlined from '@ant-design/icons/RedoOutlined';
 import Image from 'src/components/Image';
 import Input from 'antd/lib/input';
 import Button from 'src/components/Button';
-import { formatAddress, getChainDataByChainId } from 'src/helpers/wallet';
+import { formatAddress } from 'src/helpers/wallet';
 import ChooseNFTModalStyle from './style';
 import {
   EmptyNftData,
@@ -25,6 +25,7 @@ import { nftState } from 'src/state/bridge';
 import contract721 from 'src/contract/erc721';
 import * as api from 'src/apis/nft';
 import { message } from 'antd';
+import contractErc1155 from 'src/contract/erc1155';
 
 type ChooseNFTModalPropType = {
   visible: boolean;
@@ -44,11 +45,13 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   const [items, setItems] = useState<INFTParsedTokenAccount[]>([]);
   const [isManual, setIsManual] = useState(false);
   const [contractAddress, setContractAddress] = useState('');
+  const [amount, setAmount] = useState(0);
   const [tokenId, setTokenId] = useState<number | null>();
   const setNft = useSetRecoilState(nftState);
 
   const clear = () => {
     setContractAddress('');
+    setAmount(0);
     setTokenId(null);
     setIsManual(false);
     setNftStandard(NFTStandard.ERC_721);
@@ -77,7 +80,18 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   };
 
   const onSelected = (item: INFTParsedTokenAccount) => {
-    setNft(item);
+    if (nftStandard === NFTStandard.ERC_721) {
+      setNft(item);
+    } else if (nftStandard === NFTStandard.ERC_1155) {
+      if (!amount) {
+        message.error('Please fill amount!');
+        return;
+      }
+      setNft({
+        ...item,
+        uiAmount: amount,
+      });
+    }
     onClose();
   };
 
@@ -101,14 +115,47 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
         contractAddress: contractAddress,
         name: data.name,
         standard: NFTStandard.ERC_721,
-        chain: getChainDataByChainId(chainId!).value,
+        chainId: chainId!,
       };
       setNft(nftData);
       onClose();
     }
   };
 
-  const confirmToken1155 = () => {};
+  const confirmToken1155 = async () => {
+    if (!amount) {
+      message.error('Please fill amount!');
+      return;
+    }
+    if (tokenId && contractAddress) {
+      const tokenUri = await contractErc1155.getTokenUri(
+        contractAddress,
+        tokenId
+      );
+      if (!tokenUri) return;
+      const data = await api.getDataFromTokenUri(tokenUri);
+      console.log(data);
+      if (!data) {
+        message.error('Something went wrong');
+        return;
+      }
+      const nftData: INFTParsedTokenAccount = {
+        ...EmptyNftData,
+        tokenId: tokenId.toString(),
+        uri: tokenUri,
+        image: data.image,
+        nftName: data.name,
+        description: data.description,
+        walletAddress: account!,
+        contractAddress: contractAddress,
+        name: data.name,
+        standard: NFTStandard.ERC_1155,
+        chainId: chainId!,
+      };
+      setNft(nftData);
+      onClose();
+    }
+  };
 
   const confirmToken = async () => {
     setConfirmLoading(true);
@@ -149,6 +196,17 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               <RedoOutlined />
             </Button>
           </div>
+          {nftStandard === NFTStandard.ERC_1155 && (
+            <div className='token-amount-container'>
+              <span>Token Amount: </span>
+              <Input
+                type='number'
+                className='token-amount-input'
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+              />
+            </div>
+          )}
           <Button
             type='link'
             className='manual-button'
