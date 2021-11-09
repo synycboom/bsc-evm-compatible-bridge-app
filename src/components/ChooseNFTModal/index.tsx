@@ -278,9 +278,9 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               <Title level={5}>Loading available tokens</Title>
             </div>
           ) : items.length > 0 ? (
-            <Row gutter={[0, 16]} className='image-container'>
-              {items.map((item) => (
-                <Col span={8} key={item.tokenId}>
+            <Row gutter={[16, 16]} className='image-container'>
+              {items.map((item, index) => (
+                <Col span={8} key={index}>
                   <Card
                     hoverable
                     onClick={() => onSelected(item)}
