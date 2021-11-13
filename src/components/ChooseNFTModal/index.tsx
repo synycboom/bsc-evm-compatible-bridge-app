@@ -15,7 +15,6 @@ import Button from 'src/components/Button';
 import { formatAddress } from 'src/helpers/wallet';
 import ChooseNFTModalStyle from './style';
 import {
-  EmptyNftData,
   INFTParsedTokenAccount,
   NFTStandard,
   NFT_STANDARD_OPTIONS,
@@ -26,6 +25,7 @@ import contract721 from 'src/contract/erc721';
 import * as api from 'src/apis/nft';
 import { message } from 'antd';
 import contractErc1155 from 'src/contract/erc1155';
+import { EMPTY_NFT_DATA } from 'src/constances/nft';
 
 type ChooseNFTModalPropType = {
   visible: boolean;
@@ -104,7 +104,7 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
         return;
       }
       const nftData: INFTParsedTokenAccount = {
-        ...EmptyNftData,
+        ...EMPTY_NFT_DATA,
         tokenId: tokenId.toString(),
         uri: tokenUri,
         image: data.image,
@@ -139,7 +139,7 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
         return;
       }
       const nftData: INFTParsedTokenAccount = {
-        ...EmptyNftData,
+        ...EMPTY_NFT_DATA,
         tokenId: tokenId.toString(),
         uri: tokenUri,
         image: data.image,
@@ -267,9 +267,6 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
         <div
           style={{
             height: 400,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
           }}
         >
           {loading ? (
@@ -278,7 +275,7 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               <Title level={5}>Loading available tokens</Title>
             </div>
           ) : items.length > 0 ? (
-            <Row gutter={[16, 16]} className='image-container'>
+            <Row gutter={[0, 16]} className='image-container'>
               {items.map((item, index) => (
                 <Col span={8} key={index}>
                   <Card

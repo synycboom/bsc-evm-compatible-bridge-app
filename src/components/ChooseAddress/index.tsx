@@ -9,7 +9,7 @@ import Button from 'src/components/Button';
 import { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import {
-  getChainData,
+  getChainDataByChainId,
   requestChangeNetwork,
   useChainList,
 } from 'src/helpers/wallet';
@@ -91,7 +91,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                     }}
                   >
                     {chainList.map((chainItem) => (
-                      <Option value={chainItem.value} key={chainItem.id}>
+                      <Option value={chainItem.id} key={chainItem.id}>
                         <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
                       </Option>
                     ))}
@@ -123,7 +123,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                     }}
                   >
                     {chainList.map((chainItem) => (
-                      <Option value={chainItem.value} key={chainItem.id}>
+                      <Option value={chainItem.id} key={chainItem.id}>
                         <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
                       </Option>
                     ))}
@@ -164,11 +164,20 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
             <p className='address-detail'>
               From:{' '}
               <span className='address'>{bridgeAddress.sourceAddress}</span> (
-              {getChainData(chainList, bridgeAddress.sourceChain!)?.name})
+              {
+                getChainDataByChainId(chainList, bridgeAddress.sourceChain!)
+                  ?.name
+              }
+              )
             </p>
             <p className='address-detail'>
               To: <span className='address'>{bridgeAddress.targetAddress}</span>{' '}
-              ({getChainData(chainList, bridgeAddress.targetChain!)?.name})
+              (
+              {
+                getChainDataByChainId(chainList, bridgeAddress.targetChain!)
+                  ?.name
+              }
+              )
             </p>
           </div>
         )}

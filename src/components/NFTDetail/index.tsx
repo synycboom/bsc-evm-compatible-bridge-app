@@ -7,11 +7,7 @@ import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
 import ExclamationCircleOutlined from '@ant-design/icons/ExclamationCircleOutlined';
 import { bridgeAddressState, nftState } from 'src/state/bridge';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  getChainDataByChainId,
-  getChainId,
-  useChainList,
-} from 'src/helpers/wallet';
+import { getChainDataByChainId, useChainList } from 'src/helpers/wallet';
 import { getNFTStandard } from 'src/helpers/nft';
 import { useEffect, useState } from 'react';
 import { getIsNftRegistered } from 'src/apis/nft';
@@ -21,6 +17,7 @@ import Alert from 'antd/lib/alert';
 import { message } from 'antd';
 import { NFTStandard } from 'src/interfaces/nft';
 import NFTDetailStyle from './style';
+import { EMPTY_NFT_DATA } from 'src/constances/nft';
 
 enum NftStatus {
   Loading = 'loading',
@@ -45,6 +42,7 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
   const bridgeAddress = useRecoilValue(bridgeAddressState);
   const [nftStatus, setNftStatus] = useState<NftStatus>(NftStatus.Loading);
   const chainList = useChainList();
+
   const {
     name,
     image,
@@ -53,7 +51,7 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     chainId,
     standard,
     walletAddress,
-  } = nft!;
+  } = nft;
   const chainData = getChainDataByChainId(chainList, chainId);
   const validate = (): boolean => {
     return true;
@@ -86,8 +84,8 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     const isApproved = await checkIsApproved();
     if (isApproved) {
       const isRegister = await getIsNftRegistered(
-        getChainId(bridgeAddress.sourceChain!),
-        getChainId(bridgeAddress.targetChain!),
+        bridgeAddress.sourceChain!,
+        bridgeAddress.targetChain!,
         tokenAddress
       );
       if (isRegister) {
@@ -130,13 +128,13 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
       isRegistered = await contractErc721.registerToken(
         chainData.swapAgent721Address,
         tokenAddress,
-        getChainId(bridgeAddress.targetChain!)
+        bridgeAddress.targetChain!
       );
     } else if (standard === NFTStandard.ERC_1155) {
       isRegistered = await contractErc1155.registerToken(
         chainData.swapAgent1155Address,
         tokenAddress,
-        getChainId(bridgeAddress.targetChain!)
+        bridgeAddress.targetChain!
       );
     }
     if (isRegistered) {
@@ -155,6 +153,8 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     }
   }, [nft]);
 
+  if (!nft) return null;
+
   return (
     // @ts-ignore
     <NFTDetailStyle disabled={disabled}>
@@ -164,7 +164,7 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
           type='text'
           shape='circle'
           disabled={disabled}
-          onClick={() => setNft(null)}
+          onClick={() => setNft(EMPTY_NFT_DATA)}
         >
           <CloseCircleOutlined />
         </Button>

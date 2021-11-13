@@ -8,6 +8,13 @@ export enum NFTStandard {
   ERC_1155 = 'erc1155',
 }
 
+export enum TransferStatus {
+  NotStart = 'not_start',
+  InProgress = 'in_progress',
+  Done = 'done',
+  Error = 'error',
+}
+
 export const NFT_STANDARD_OPTIONS = [
   {
     label: 'ERC-721',
@@ -42,27 +49,6 @@ export interface INFTParsedTokenAccount {
   chain?: Chain;
   chainId: number;
 }
-
-export const EmptyNftData: INFTParsedTokenAccount = {
-  tokenId: '',
-  uri: '',
-  animation_url: '',
-  external_url: '',
-  image: '',
-  image_256: '',
-  nftName: '',
-  description: '',
-  walletAddress: '',
-  contractAddress: '',
-  amount: '',
-  decimals: 0,
-  uiAmount: 0,
-  uiAmountString: '',
-  name: '',
-  standard: NFTStandard.ERC_721,
-  chain: Chain.ETHEREUM,
-  chainId: 0,
-};
 
 export type CovalentNFTExternalData = {
   animation_url: string | null;
@@ -114,3 +100,48 @@ export type InfoData = {
   eth_chain_id: number;
   bsc_chain_id: number;
 };
+
+export interface TransferData {
+  status: TransferStatus;
+  dstTokenAddress: string;
+  dstTokenId: string;
+}
+
+export enum SwapState {
+  RequestOngoing = 'request_ongoing',
+  RequestRejected = 'request_rejected',
+  RequestConfirmed = 'request_confirmed',
+  FillTxDryRunFailed = 'fill_tx_dry_run_failed',
+  FillTxCreated = 'fill_tx_created',
+  FillTxSent = 'fill_tx_sent',
+  FillTxConfirmed = 'fill_tx_confirmed',
+  FillTxFailed = 'fill_tx_failed',
+  FillTxMissing = 'fill_tx_missing',
+}
+
+export const ERROR_STATE = [
+  SwapState.FillTxFailed,
+  SwapState.FillTxMissing,
+  SwapState.RequestRejected,
+  SwapState.FillTxDryRunFailed,
+];
+
+export interface Erc721Swap {
+  base_uri: string;
+  created_at: string;
+  dst_chain_id: string;
+  dst_token_addr: string;
+  dst_token_name: string;
+  fill_tx_hash: string;
+  recipient: string;
+  request_tx_hash: string;
+  sender: string;
+  src_chain_id: string;
+  src_token_addr: string;
+  src_token_name: string;
+  state: SwapState;
+  swap_direction: string;
+  token_id: string;
+  token_uri: string;
+  updated_at: string;
+}

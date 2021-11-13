@@ -18,15 +18,15 @@ export const getLibrary = (provider: any): ethers.providers.Web3Provider => {
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Web3ReactProvider>
-    </RecoilRoot>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <RecoilRoot>
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Web3ReactProvider>
+  </RecoilRoot>,
+  // </React.StrictMode>,
   document.getElementById('root')
 );
 

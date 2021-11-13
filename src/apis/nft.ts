@@ -1,13 +1,15 @@
-import { message } from 'antd';
 import axios from 'axios';
 import { serializeQueryString } from 'src/helpers';
+import { parseNFTData } from 'src/helpers/nft';
 import {
+  Erc721Swap,
   ERROR_STATE,
-  parseNFTData,
+  INFTParsedTokenAccount,
+  NFTStandard,
   SwapState,
+  TransferData,
   TransferStatus,
-} from 'src/helpers/nft';
-import { INFTParsedTokenAccount, NFTStandard } from 'src/interfaces/nft';
+} from 'src/interfaces/nft';
 import setting from 'src/setting';
 
 export type INFTList = Array<{
@@ -107,30 +109,37 @@ export const getDataFromTokenUri = async (
   }
 };
 
-export const getTransferStatus = async (
+export const get721TransferData = async (
   sender: string,
   txHash: string
-): Promise<TransferStatus> => {
+): Promise<TransferData> => {
   const url = `${setting.API_URL}/v1/erc-721-swaps?limit=1&sender=${sender}&request_tx_hash=${txHash}`;
+  const data = {
+    status: TransferStatus.InProgress,
+    dstTokenAddress: '',
+    dstTokenId: '',
+  };
   try {
-    const response = await axios.get<{ erc_721_swaps: Array<any> }>(url);
+    const response = await axios.get<{ erc_721_swaps: Array<Erc721Swap> }>(url);
     const transactionData = response.data.erc_721_swaps[0];
+
     if (!transactionData) {
-      return TransferStatus.InProgress;
+      return data;
     }
 
     const { state } = transactionData;
 
     if (state === SwapState.FillTxConfirmed) {
-      return TransferStatus.Done;
+      data.status = TransferStatus.Done;
     } else if (ERROR_STATE.includes(state)) {
-      return TransferStatus.Error;
+      data.status = TransferStatus.Error;
     }
-    return TransferStatus.InProgress;
+    data.status = TransferStatus.InProgress;
   } catch (error) {
     console.error(error);
-    return TransferStatus.Error;
+    data.status = TransferStatus.Error;
   }
+  return data;
 };
 
 export const get1155TransferStatus = async (

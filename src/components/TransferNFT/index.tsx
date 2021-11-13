@@ -1,54 +1,71 @@
 import Button from 'src/components/Button';
 import Alert from 'antd/lib/alert';
 import ExclamationCircleOutlined from '@ant-design/icons/ExclamationCircleOutlined';
-import {
-  getChainDataByChainId,
-  getChainId,
-  useChainList,
-} from 'src/helpers/wallet';
+import { getChainDataByChainId, useChainList } from 'src/helpers/wallet';
 import { useWeb3React } from '@web3-react/core';
 import contractErc721 from 'src/contract/erc721';
 import contractErc1155 from 'src/contract/erc1155';
 import message from 'antd/lib/message';
 
-import TransferNFTStyle from './style';
-import { bridgeAddressState, nftState } from 'src/state/bridge';
-import { useRecoilValue } from 'recoil';
+import { bridgeAddressState, nftState, stepDataState } from 'src/state/bridge';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useEffect, useState } from 'react';
-import { getTransferStatus, get1155TransferStatus } from 'src/apis/nft';
-import { TransferStatus } from 'src/helpers/nft';
-import TransferStatusLabel from '../TransferStatusLabel';
-import { NFTStandard } from 'src/interfaces/nft';
+import { get721TransferData, get1155TransferStatus } from 'src/apis/nft';
+import TransferStatusLabel from 'src/components/TransferStatusLabel';
+import { NFTStandard, TransferStatus } from 'src/interfaces/nft';
+import TextAddress from 'src/components/TextAddress';
+import TransferNFTStyle from './style';
 
 const TransferNFT: React.FC = () => {
   const { chainId } = useWeb3React();
   const nft = useRecoilValue(nftState);
   const [txHash, setTxHash] = useState('');
+  const [dstData, setDstData] = useState({
+    tokenAddress: '',
+    tokenId: '',
+  });
   const bridgeAddress = useRecoilValue(bridgeAddressState);
-  const [transferStatus, setTransferStatus] = useState(TransferStatus.NotStart);
+  const [{ step, transferStatus }, setStepData] = useRecoilState(stepDataState);
+  const chainList = useChainList();
+  const chainData = getChainDataByChainId(chainList, chainId);
+
   const {
     contractAddress: tokenAddress,
     tokenId,
     walletAddress,
     standard,
     uiAmount,
-  } = nft!;
-  const chainList = useChainList();
-  const chainData = getChainDataByChainId(chainList, chainId);
+  } = nft || {};
+
+  const setTransferStatus = (value: TransferStatus) => {
+    setStepData({
+      step,
+      transferStatus: value,
+    });
+  };
 
   const checkStatus = async () => {
-    let status;
     if (standard === NFTStandard.ERC_721) {
-      status = await getTransferStatus(walletAddress, txHash);
+      const { status, dstTokenAddress, dstTokenId } = await get721TransferData(
+        walletAddress,
+        txHash
+      );
+      if (status === TransferStatus.Done) {
+        setDstData({
+          tokenAddress: dstTokenAddress,
+          tokenId: dstTokenId,
+        });
+      }
+      setTransferStatus(status);
     } else {
-      status = await get1155TransferStatus(walletAddress, txHash);
+      const status = await get1155TransferStatus(walletAddress, txHash);
+      setTransferStatus(status);
     }
-    setTransferStatus(status);
   };
 
   useEffect(() => {
     if (transferStatus === TransferStatus.InProgress) {
-      const interval = setInterval(checkStatus, 5000);
+      const interval = setInterval(checkStatus, 2000);
       return () => clearInterval(interval);
     }
   }, [transferStatus]);
@@ -61,7 +78,7 @@ const TransferNFT: React.FC = () => {
         tokenAddress,
         bridgeAddress.targetAddress,
         tokenId!,
-        getChainId(bridgeAddress.targetChain!)
+        bridgeAddress.targetChain!
       );
     } else if (standard === NFTStandard.ERC_1155) {
       transferTxHash = await contractErc1155.transferToken(
@@ -70,17 +87,19 @@ const TransferNFT: React.FC = () => {
         bridgeAddress.targetAddress,
         tokenId!,
         uiAmount!,
-        getChainId(bridgeAddress.targetChain!)
+        bridgeAddress.targetChain!
       );
     }
     if (transferTxHash) {
       setTxHash(transferTxHash);
       setTransferStatus(TransferStatus.InProgress);
-      message.success('Transfer in progress...');
+      message.success('Request transfer success');
     } else {
       message.error('Something went wrong!');
     }
   };
+
+  if (!nft) return null;
 
   return (
     <TransferNFTStyle>
@@ -111,6 +130,15 @@ const TransferNFT: React.FC = () => {
         <div className='progress-container'>
           <p className='status-label'>Status: </p>
           <TransferStatusLabel status={transferStatus} />
+          {transferStatus === TransferStatus.Done && (
+            <>
+              <p>
+                Destination Token Address:{' '}
+                <TextAddress address={dstData.tokenAddress} />
+              </p>
+              <p>Destination Token Id: {dstData.tokenId}</p>
+            </>
+          )}
         </div>
       )}
     </TransferNFTStyle>

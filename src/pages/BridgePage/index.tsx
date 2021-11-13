@@ -6,22 +6,32 @@ import Steps from 'antd/lib/steps';
 import ChooseAddress from 'src/components/ChooseAddress';
 import ChooseNFTModal from 'src/components/ChooseNFTModal';
 import { useRecoilState } from 'recoil';
-import { nftState } from 'src/state/bridge';
+import { nftState, stepDataState } from 'src/state/bridge';
 import NFTDetail from 'src/components/NFTDetail';
 import { useWeb3React } from '@web3-react/core';
 import BridgePageStyle from './style';
 import TransferNFT from 'src/components/TransferNFT';
+import { EMPTY_NFT_DATA } from 'src/constances/nft';
+import { TransferStatus } from 'src/interfaces/nft';
 
 const { Step } = Steps;
 
 const BridgePage: React.FC = () => {
-  const [step, setStep] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [nft, setNft] = useRecoilState(nftState);
+  const [stepData, setStepData] = useRecoilState(stepDataState);
   const { account, chainId } = useWeb3React();
+  const { step, transferStatus } = stepData;
+
+  const setStep = (value: number) => {
+    setStepData({
+      step: value + 1,
+      transferStatus: TransferStatus.NotStart,
+    });
+  };
 
   const next = () => {
-    setStep(step + 1);
+    setStep(step);
   };
 
   const confirmModal = () => {
@@ -32,8 +42,10 @@ const BridgePage: React.FC = () => {
   };
 
   useEffect(() => {
-    setNft(null);
+    setNft(EMPTY_NFT_DATA);
   }, [account, chainId]);
+
+  const isDone = transferStatus === TransferStatus.Done;
 
   return (
     <BridgePageStyle>
@@ -54,15 +66,16 @@ const BridgePage: React.FC = () => {
           direction='vertical'
         >
           <Step
+            disabled={step === 2 || isDone}
             title='Step 1: Choose Address'
             description={<ChooseAddress active={step === 0} next={next} />}
           />
           <Step
-            disabled={step < 1}
+            disabled={step < 1 || isDone}
             title='Step 2: Select NFT'
             description={
               <div className='box'>
-                {!!nft ? (
+                {!!nft.contractAddress ? (
                   <NFTDetail disabled={step !== 1} next={next} />
                 ) : (
                   <>

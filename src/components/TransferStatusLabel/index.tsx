@@ -1,9 +1,9 @@
 import SyncOutlined from '@ant-design/icons/SyncOutlined';
 import CheckCircleTwoTone from '@ant-design/icons/CheckCircleTwoTone';
 import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
-import { TransferStatus } from 'src/helpers/nft';
 import Tag from 'antd/lib/tag';
 import styled from 'styled-components';
+import { TransferStatus } from 'src/interfaces/nft';
 
 const Style = styled.div`
   display: flex;

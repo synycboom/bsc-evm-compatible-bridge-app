@@ -10,12 +10,14 @@ import {
   useChainList,
 } from 'src/helpers/wallet';
 import dayjs from 'dayjs';
-import { getNFTStatusFromState, SwapState } from 'src/helpers/nft';
+import { getNFTStatusFromState } from 'src/helpers/nft';
 import TransferStatusLabel from 'src/components/TransferStatusLabel';
 import { useWeb3React } from '@web3-react/core';
 import ConnectWalletButton from 'src/components/ConnectWalletButton';
 
 import StatusPageStyle from './style';
+import { SwapState } from 'src/interfaces/nft';
+import TextAddress from 'src/components/TextAddress';
 
 const AddressTooltip = ({ text, children }: any) => {
   return (
@@ -46,10 +48,10 @@ const StatusPage: React.FC = () => {
       dataIndex: 'sender',
       key: 'sender',
       render: (text: string, record: any) => (
-        <AddressTooltip text={text}>
-          {formatAddress(text, 6)}
+        <>
+          <TextAddress address={text} length={4} />
           <br />({getChainDataByChainId(chainList, record.src_chain_id)?.name})
-        </AddressTooltip>
+        </>
       ),
     },
     {
@@ -57,18 +59,26 @@ const StatusPage: React.FC = () => {
       dataIndex: 'recipient',
       key: 'recipient',
       render: (text: string, record: any) => (
-        <AddressTooltip text={text}>
-          {formatAddress(text, 6)}
+        <>
+          <TextAddress address={text} length={4} />
           <br />({getChainDataByChainId(chainList, record.dst_chain_id)?.name})
-        </AddressTooltip>
+        </>
       ),
     },
     {
-      title: 'Token Address',
+      title: 'Source Token Address',
       dataIndex: 'src_token_addr',
       key: 'src_token_addr',
       render: (text: string) => (
-        <AddressTooltip text={text}>{formatAddress(text, 6)}</AddressTooltip>
+        <TextAddress address={text} length={4} copyable />
+      ),
+    },
+    {
+      title: 'Destination Token Address',
+      dataIndex: 'dst_token_addr',
+      key: 'dst_token_addr',
+      render: (text: string) => (
+        <TextAddress address={text} length={4} copyable />
       ),
     },
     {
@@ -100,10 +110,10 @@ const StatusPage: React.FC = () => {
       dataIndex: 'sender',
       key: 'sender',
       render: (text: string, record: any) => (
-        <AddressTooltip text={text}>
-          {formatAddress(text, 6)}
+        <>
+          <TextAddress address={text} length={4} />
           <br />({getChainDataByChainId(chainList, record.src_chain_id)?.name})
-        </AddressTooltip>
+        </>
       ),
     },
     {
@@ -111,18 +121,26 @@ const StatusPage: React.FC = () => {
       dataIndex: 'recipient',
       key: 'recipient',
       render: (text: string, record: any) => (
-        <AddressTooltip text={text}>
-          {formatAddress(text, 6)}
+        <>
+          <TextAddress address={text} length={4} />
           <br />({getChainDataByChainId(chainList, record.dst_chain_id)?.name})
-        </AddressTooltip>
+        </>
       ),
     },
     {
-      title: 'Token Address',
+      title: 'Source Token Address',
       dataIndex: 'src_token_addr',
       key: 'src_token_addr',
       render: (text: string) => (
-        <AddressTooltip text={text}>{formatAddress(text, 6)}</AddressTooltip>
+        <TextAddress address={text} length={4} copyable />
+      ),
+    },
+    {
+      title: 'Destination Token Address',
+      dataIndex: 'dst_token_addr',
+      key: 'dst_token_addr',
+      render: (text: string) => (
+        <TextAddress address={text} length={4} copyable />
       ),
     },
     {

@@ -2,10 +2,13 @@ import { formatUnits } from 'ethers/lib/utils';
 import { getDataFromTokenUri } from 'src/apis/nft';
 import {
   CovalentData,
+  ERROR_STATE,
   INFTParsedTokenAccount,
   NFTStandard,
   NFTStandardData,
   NFT_STANDARD_OPTIONS,
+  SwapState,
+  TransferStatus,
 } from 'src/interfaces/nft';
 
 export const parseNFTData = async (
@@ -66,32 +69,6 @@ export const parseNFTData = async (
 export const getNFTStandard = (standard: NFTStandard): NFTStandardData => {
   return NFT_STANDARD_OPTIONS.find((item) => item.value === standard)!;
 };
-
-export enum TransferStatus {
-  NotStart = 'not_start',
-  InProgress = 'in_progress',
-  Done = 'done',
-  Error = 'error',
-}
-
-export enum SwapState {
-  RequestOngoing = 'request_ongoing',
-  RequestRejected = 'request_rejected',
-  RequestConfirmed = 'request_confirmed',
-  FillTxDryRunFailed = 'fill_tx_dry_run_failed',
-  FillTxCreated = 'fill_tx_created',
-  FillTxSent = 'fill_tx_sent',
-  FillTxConfirmed = 'fill_tx_confirmed',
-  FillTxFailed = 'fill_tx_failed',
-  FillTxMissing = 'fill_tx_missing',
-}
-
-export const ERROR_STATE = [
-  SwapState.FillTxFailed,
-  SwapState.FillTxMissing,
-  SwapState.RequestRejected,
-  SwapState.FillTxDryRunFailed,
-];
 
 export const getNFTStatusFromState = (state: SwapState) => {
   if (state === SwapState.FillTxConfirmed) {
