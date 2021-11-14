@@ -25,7 +25,7 @@ const BridgePage: React.FC = () => {
   const [nft, setNft] = useRecoilState(nftState);
   const setBridgeAddress = useSetRecoilState(bridgeAddressState);
   const [stepData, setStepData] = useRecoilState(stepDataState);
-  const { account, chainId } = useWeb3React();
+  const { account, chainId, deactivate } = useWeb3React();
   const { step, transferStatus } = stepData;
 
   const setStep = (value: number) => {
@@ -50,6 +50,7 @@ const BridgePage: React.FC = () => {
     setNft(EMPTY_NFT_DATA);
     setStepData(DEFAULT_STEP_DATA_STATE);
     setBridgeAddress(DEFAULT_BRIDGE_ADDRESS_STATE);
+    deactivate();
   };
 
   useEffect(() => {

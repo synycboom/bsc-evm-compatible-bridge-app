@@ -60,10 +60,12 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
   }, [chainId, bridgeAddress.sourceChain]);
 
   useEffect(() => {
-    setBridgeAddress({
-      ...bridgeAddress,
-      sourceAddress: account || '',
-    });
+    if (account) {
+      setBridgeAddress({
+        ...bridgeAddress,
+        sourceAddress: account || '',
+      });
+    }
   }, [account, chainId]);
 
   return (
