@@ -86,7 +86,7 @@ export type ChainData = {
   name: string;
   value: Chain;
   registerFee: number;
-  bridgeFee: number;
+  transferFee: number;
   currency: string;
   swapAgent721Address: string;
   swapAgent1155Address: string;

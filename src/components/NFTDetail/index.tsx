@@ -144,13 +144,15 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
       isRegistered = await contractErc721.registerToken(
         chainData.swapAgent721Address,
         tokenAddress,
-        bridgeAddress.targetChain!
+        bridgeAddress.targetChain!,
+        chainData.registerFee
       );
     } else if (standard === NFTStandard.ERC_1155) {
       isRegistered = await contractErc1155.registerToken(
         chainData.swapAgent1155Address,
         tokenAddress,
-        bridgeAddress.targetChain!
+        bridgeAddress.targetChain!,
+        chainData.registerFee
       );
     }
     if (isRegistered) {

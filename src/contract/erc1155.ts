@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { ethers } from 'ethers';
 import { getContract } from '.';
 import erc1155Abi from './abi/erc1155';
 import erc1155Agent from './abi/erc1155Agent';
@@ -60,14 +61,19 @@ class Contract1155 {
   async registerToken(
     agentAddress: string,
     tokenAddress: string,
-    targetChainId: number
+    targetChainId: number,
+    fee: number
   ): Promise<boolean> {
     return new Promise(async (reslove) => {
       const contract = getContract(agentAddress, erc1155Agent);
       try {
+        const overrides = {
+          value: ethers.utils.parseEther(fee.toString()),
+        };
         const response = await contract.registerSwapPair(
           tokenAddress,
-          targetChainId
+          targetChainId,
+          overrides
         );
         console.info('tx: ', response.hash);
         contract.on(
@@ -92,16 +98,21 @@ class Contract1155 {
     recipient: string,
     tokenId: number | string,
     amounts: number,
-    targetChainId: number
+    targetChainId: number,
+    fee: number
   ): Promise<string> {
     const contract = getContract(agentAddress, erc1155Agent);
     try {
+      const overrides = {
+        value: ethers.utils.parseEther(fee.toString()),
+      };
       const response = await contract.swap(
         tokenAddress,
         recipient,
         [Number(tokenId)],
         [amounts],
-        targetChainId
+        targetChainId,
+        overrides
       );
       return response.hash;
     } catch (error: any) {

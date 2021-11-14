@@ -77,7 +77,8 @@ const TransferNFT: React.FC = () => {
         tokenAddress,
         bridgeAddress.targetAddress,
         tokenId!,
-        bridgeAddress.targetChain!
+        bridgeAddress.targetChain!,
+        chainData.transferFee
       );
     } else if (standard === NFTStandard.ERC_1155) {
       transferTxHash = await contractErc1155.transferToken(
@@ -86,7 +87,8 @@ const TransferNFT: React.FC = () => {
         bridgeAddress.targetAddress,
         tokenId!,
         uiAmount!,
-        bridgeAddress.targetChain!
+        bridgeAddress.targetChain!,
+        chainData.transferFee
       );
     }
     if (transferTxHash) {
@@ -118,7 +120,7 @@ const TransferNFT: React.FC = () => {
             message={
               <span>
                 <ExclamationCircleOutlined />{' '}
-                {`You have to pay transfer fee ${chainData.bridgeFee} ${chainData.currency}`}
+                {`You have to pay transfer fee ${chainData.transferFee} ${chainData.currency}`}
               </span>
             }
             type='warning'

@@ -40,6 +40,13 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
       !bridgeAddress.sourceChain ||
       !bridgeAddress.sourceAddress
     ) {
+      message.error('Please choose address and chain!');
+      return false;
+    }
+
+    if (chainId !== bridgeAddress.sourceChain) {
+      const chain = getChainDataByChainId(chainList, bridgeAddress.sourceChain);
+      message.error(`Please switch chain to ${chain.name}`);
       return false;
     }
     return true;
@@ -48,8 +55,6 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
   const validateAndNext = () => {
     if (validate()) {
       next();
-    } else {
-      message.error('Please choose address and chain!');
     }
   };
 

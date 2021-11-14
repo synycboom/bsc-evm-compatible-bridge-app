@@ -2,6 +2,7 @@ import erc721AgentAbi from './abi/erc721Agent';
 import erc721Abi from './abi/erc721';
 import { getContract } from '.';
 import { message } from 'antd';
+import { ethers } from 'ethers';
 
 class Contract721 {
   async getApprove(
@@ -57,11 +58,20 @@ class Contract721 {
   async registerToken(
     agentAddress: string,
     tokenAddress: string,
-    targetChainId: number
+    targetChainId: number,
+    fee: number
   ): Promise<boolean> {
     return new Promise(async (reslove) => {
       const contract = getContract(agentAddress, erc721AgentAbi);
       try {
+        const overrides = {
+          value: ethers.utils.parseEther(fee.toString()),
+        };
+        const response = await contract.registerSwapPair(
+          tokenAddress,
+          targetChainId,
+          overrides
+        );
         contract.on(
           'SwapPairRegister',
           (
@@ -84,10 +94,6 @@ class Contract721 {
             contract.removeAllListeners('SwapPairRegister');
           }
         );
-        const response = await contract.registerSwapPair(
-          tokenAddress,
-          targetChainId
-        );
         console.info('tx: ', response.hash);
       } catch {
         contract.removeAllListeners('SwapPairRegister');
@@ -101,15 +107,20 @@ class Contract721 {
     tokenAddress: string,
     recipient: string,
     tokenId: number | string,
-    targetChainId: number
+    targetChainId: number,
+    fee: number
   ): Promise<string> {
     const contract = getContract(agentAddress, erc721AgentAbi);
     try {
+      const overrides = {
+        value: ethers.utils.parseEther(fee.toString()),
+      };
       const response = await contract.swap(
         tokenAddress,
         recipient,
         Number(tokenId),
-        targetChainId
+        targetChainId,
+        overrides
       );
       console.debug('tx: ', response.hash);
       return response.hash;
