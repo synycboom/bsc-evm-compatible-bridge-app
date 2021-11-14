@@ -14,7 +14,6 @@ class Contract1155 {
       account,
       contractAddress
     );
-    console.log({ approvedContract });
     return approvedContract;
   }
 
@@ -26,9 +25,9 @@ class Contract1155 {
           contractAddress,
           true
         );
-        console.log(response.hash);
+        console.debug(response.hash);
         contract.on('ApprovalForAll', (account, operator, approved) => {
-          console.log(account, operator, approved);
+          console.debug(account, operator, approved);
           if (
             operator.toLowerCase() === contractAddress.toLowerCase() &&
             approved
@@ -74,13 +73,13 @@ class Contract1155 {
         contract.on(
           'SwapPairRegister',
           (sponsor, _tokenAddress, toChainId, feeAmount) => {
-            console.log(sponsor, _tokenAddress, toChainId, feeAmount);
+            console.debug(sponsor, _tokenAddress, toChainId, feeAmount);
             reslove(true);
             contract.removeAllListeners('SwapPairRegister');
           }
         );
       } catch (error) {
-        console.log(error);
+        console.debug(error);
         contract.removeAllListeners('SwapPairRegister');
         reslove(false);
       }
@@ -105,8 +104,9 @@ class Contract1155 {
         targetChainId
       );
       return response.hash;
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.debug(error);
+      message.error(error.data.message);
       return '';
     }
   }

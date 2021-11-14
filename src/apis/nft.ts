@@ -126,15 +126,17 @@ export const get721TransferData = async (
     if (!transactionData) {
       return data;
     }
-
-    const { state } = transactionData;
+    const { state, dst_token_addr, token_id } = transactionData;
 
     if (state === SwapState.FillTxConfirmed) {
       data.status = TransferStatus.Done;
+      data.dstTokenAddress = dst_token_addr;
+      data.dstTokenId = token_id;
     } else if (ERROR_STATE.includes(state)) {
-      data.status = TransferStatus.Error;
+      status = TransferStatus.Error;
+    } else {
+      status = TransferStatus.InProgress;
     }
-    data.status = TransferStatus.InProgress;
   } catch (error) {
     console.error(error);
     data.status = TransferStatus.Error;
@@ -145,27 +147,36 @@ export const get721TransferData = async (
 export const get1155TransferStatus = async (
   sender: string,
   txHash: string
-): Promise<TransferStatus> => {
+): Promise<TransferData> => {
   const url = `${setting.API_URL}/v1/erc-1155-swaps?limit=1&sender=${sender}&request_tx_hash=${txHash}`;
+  const data = {
+    status: TransferStatus.InProgress,
+    dstTokenAddress: '',
+    dstTokenId: '',
+  };
   try {
     const response = await axios.get<{ erc_1155_swaps: Array<any> }>(url);
     const transactionData = response.data.erc_1155_swaps[0];
     if (!transactionData) {
-      return TransferStatus.InProgress;
+      return data;
     }
 
-    const { state } = transactionData;
+    const { state, dst_token_addr, token_id } = transactionData;
 
     if (state === SwapState.FillTxConfirmed) {
-      return TransferStatus.Done;
+      data.status = TransferStatus.Done;
+      data.dstTokenAddress = dst_token_addr;
+      data.dstTokenId = token_id;
     } else if (ERROR_STATE.includes(state)) {
-      return TransferStatus.Error;
+      status = TransferStatus.Error;
+    } else {
+      status = TransferStatus.InProgress;
     }
-    return TransferStatus.InProgress;
   } catch (error) {
     console.error(error);
-    return TransferStatus.Error;
+    data.status = TransferStatus.Error;
   }
+  return data;
 };
 
 export const getTransferStatusList = async (

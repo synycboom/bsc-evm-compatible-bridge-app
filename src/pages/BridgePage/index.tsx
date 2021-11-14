@@ -5,13 +5,17 @@ import { useEffect, useState } from 'react';
 import Steps from 'antd/lib/steps';
 import ChooseAddress from 'src/components/ChooseAddress';
 import ChooseNFTModal from 'src/components/ChooseNFTModal';
-import { useRecoilState } from 'recoil';
-import { nftState, stepDataState } from 'src/state/bridge';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { bridgeAddressState, nftState, stepDataState } from 'src/state/bridge';
 import NFTDetail from 'src/components/NFTDetail';
 import { useWeb3React } from '@web3-react/core';
 import BridgePageStyle from './style';
 import TransferNFT from 'src/components/TransferNFT';
-import { EMPTY_NFT_DATA } from 'src/constances/nft';
+import {
+  DEFAULT_BRIDGE_ADDRESS_STATE,
+  DEFAULT_STEP_DATA_STATE,
+  EMPTY_NFT_DATA,
+} from 'src/constants/nft';
 import { TransferStatus } from 'src/interfaces/nft';
 
 const { Step } = Steps;
@@ -19,19 +23,20 @@ const { Step } = Steps;
 const BridgePage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [nft, setNft] = useRecoilState(nftState);
+  const setBridgeAddress = useSetRecoilState(bridgeAddressState);
   const [stepData, setStepData] = useRecoilState(stepDataState);
   const { account, chainId } = useWeb3React();
   const { step, transferStatus } = stepData;
 
   const setStep = (value: number) => {
     setStepData({
-      step: value + 1,
+      step: value,
       transferStatus: TransferStatus.NotStart,
     });
   };
 
   const next = () => {
-    setStep(step);
+    setStep(step + 1);
   };
 
   const confirmModal = () => {
@@ -41,11 +46,23 @@ const BridgePage: React.FC = () => {
     setIsModalVisible(false);
   };
 
+  const clear = () => {
+    setNft(EMPTY_NFT_DATA);
+    setStepData(DEFAULT_STEP_DATA_STATE);
+    setBridgeAddress(DEFAULT_BRIDGE_ADDRESS_STATE);
+  };
+
   useEffect(() => {
     setNft(EMPTY_NFT_DATA);
   }, [account, chainId]);
 
-  const isDone = transferStatus === TransferStatus.Done;
+  const isEditable = ![TransferStatus.Done, TransferStatus.InProgress].includes(
+    transferStatus
+  );
+
+  useEffect(() => {
+    clear();
+  }, []);
 
   return (
     <BridgePageStyle>
@@ -66,12 +83,12 @@ const BridgePage: React.FC = () => {
           direction='vertical'
         >
           <Step
-            disabled={step === 2 || isDone}
+            disabled={step === 2 || !isEditable}
             title='Step 1: Choose Address'
             description={<ChooseAddress active={step === 0} next={next} />}
           />
           <Step
-            disabled={step < 1 || isDone}
+            disabled={step < 1 || !isEditable}
             title='Step 2: Select NFT'
             description={
               <div className='box'>

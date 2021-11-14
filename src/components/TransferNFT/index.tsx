@@ -15,6 +15,7 @@ import TransferStatusLabel from 'src/components/TransferStatusLabel';
 import { NFTStandard, TransferStatus } from 'src/interfaces/nft';
 import TextAddress from 'src/components/TextAddress';
 import TransferNFTStyle from './style';
+import Title from 'antd/lib/typography/Title';
 
 const TransferNFT: React.FC = () => {
   const { chainId } = useWeb3React();
@@ -45,20 +46,18 @@ const TransferNFT: React.FC = () => {
   };
 
   const checkStatus = async () => {
+    let result = null;
     if (standard === NFTStandard.ERC_721) {
-      const { status, dstTokenAddress, dstTokenId } = await get721TransferData(
-        walletAddress,
-        txHash
-      );
-      if (status === TransferStatus.Done) {
-        setDstData({
-          tokenAddress: dstTokenAddress,
-          tokenId: dstTokenId,
-        });
-      }
-      setTransferStatus(status);
+      result = await get721TransferData(walletAddress, txHash);
     } else {
-      const status = await get1155TransferStatus(walletAddress, txHash);
+      result = await get1155TransferStatus(walletAddress, txHash);
+    }
+    const { status, dstTokenAddress, dstTokenId } = result;
+    if (status === TransferStatus.Done) {
+      setDstData({
+        tokenAddress: dstTokenAddress,
+        tokenId: dstTokenId,
+      });
       setTransferStatus(status);
     }
   };
@@ -127,19 +126,24 @@ const TransferNFT: React.FC = () => {
         </>
       )}
       {transferStatus !== TransferStatus.NotStart && (
-        <div className='progress-container'>
-          <p className='status-label'>Status: </p>
-          <TransferStatusLabel status={transferStatus} />
+        <>
+          <div className='progress-container'>
+            <Title level={5}>Status: </Title>
+            <TransferStatusLabel status={transferStatus} />
+          </div>
           {transferStatus === TransferStatus.Done && (
             <>
-              <p>
-                Destination Token Address:{' '}
-                <TextAddress address={dstData.tokenAddress} />
-              </p>
-              <p>Destination Token Id: {dstData.tokenId}</p>
+              <div className='token-container'>
+                <Title level={5}>Destination Token Address: </Title>{' '}
+                <TextAddress address={dstData.tokenAddress} copyable />
+              </div>
+              {/* <div className='token-container'>
+                <Title level={5}>Destination Token Id: </Title>{' '}
+                {dstData.tokenId}
+              </div> */}
             </>
           )}
-        </div>
+        </>
       )}
     </TransferNFTStyle>
   );

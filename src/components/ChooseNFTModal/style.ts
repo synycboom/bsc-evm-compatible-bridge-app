@@ -20,6 +20,13 @@ const ChooseNFTModalStyle = styled(Modal)`
     }
   }
 
+  .no-data-container {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+  }
+
   .ant-modal-content {
     border-radius: 16px;
     width: 600px;

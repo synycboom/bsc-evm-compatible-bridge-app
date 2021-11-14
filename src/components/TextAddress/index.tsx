@@ -3,7 +3,7 @@ import { formatAddress } from 'src/helpers/wallet';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import styled from 'styled-components';
 
-const AddressTooltip = ({ text, children, hoverable }: any) => {
+const AddressTooltip = ({ text, children }: any) => {
   return (
     <Tooltip
       title={text}

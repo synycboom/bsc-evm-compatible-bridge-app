@@ -1,15 +1,14 @@
 import { atom } from 'recoil';
-import { EMPTY_NFT_DATA } from 'src/constances/nft';
-import { INFTParsedTokenAccount, TransferStatus } from 'src/interfaces/nft';
+import {
+  DEFAULT_BRIDGE_ADDRESS_STATE,
+  DEFAULT_STEP_DATA_STATE,
+  EMPTY_NFT_DATA,
+} from 'src/constants/nft';
+import { INFTParsedTokenAccount } from 'src/interfaces/nft';
 
 export const bridgeAddressState = atom({
   key: 'bridgeAddressState',
-  default: {
-    sourceAddress: '',
-    sourceChain: undefined,
-    targetAddress: '',
-    targetChain: undefined,
-  },
+  default: DEFAULT_BRIDGE_ADDRESS_STATE,
 });
 
 export const nftState = atom<INFTParsedTokenAccount>({
@@ -19,8 +18,5 @@ export const nftState = atom<INFTParsedTokenAccount>({
 
 export const stepDataState = atom({
   key: 'stepDataState',
-  default: {
-    step: 0,
-    transferStatus: TransferStatus.NotStart,
-  },
+  default: DEFAULT_STEP_DATA_STATE,
 });

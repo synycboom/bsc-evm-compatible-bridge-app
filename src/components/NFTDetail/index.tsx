@@ -10,14 +10,15 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { getChainDataByChainId, useChainList } from 'src/helpers/wallet';
 import { getNFTStandard } from 'src/helpers/nft';
 import { useEffect, useState } from 'react';
-import { getIsNftRegistered } from 'src/apis/nft';
+import { getIsNft1155Registered, getIsNftRegistered } from 'src/apis/nft';
 import contractErc721 from 'src/contract/erc721';
 import contractErc1155 from 'src/contract/erc1155';
 import Alert from 'antd/lib/alert';
 import { message } from 'antd';
 import { NFTStandard } from 'src/interfaces/nft';
+import { EMPTY_NFT_DATA } from 'src/constants/nft';
+import Input from 'antd/lib/input';
 import NFTDetailStyle from './style';
-import { EMPTY_NFT_DATA } from 'src/constances/nft';
 
 enum NftStatus {
   Loading = 'loading',
@@ -51,9 +52,14 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     chainId,
     standard,
     walletAddress,
+    uiAmount,
   } = nft;
   const chainData = getChainDataByChainId(chainList, chainId);
   const validate = (): boolean => {
+    if (standard === NFTStandard.ERC_1155 && !uiAmount) {
+      message.error('Please fill token amount!');
+      return false;
+    }
     return true;
   };
 
@@ -83,11 +89,21 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
   async function checkNftStatus() {
     const isApproved = await checkIsApproved();
     if (isApproved) {
-      const isRegister = await getIsNftRegistered(
-        bridgeAddress.sourceChain!,
-        bridgeAddress.targetChain!,
-        tokenAddress
-      );
+      let isRegister;
+      if (standard === NFTStandard.ERC_721) {
+        isRegister = await getIsNftRegistered(
+          bridgeAddress.sourceChain!,
+          bridgeAddress.targetChain!,
+          tokenAddress
+        );
+      } else if (standard === NFTStandard.ERC_1155) {
+        isRegister = await getIsNft1155Registered(
+          bridgeAddress.sourceChain!,
+          bridgeAddress.targetChain!,
+          tokenAddress
+        );
+      }
+
       if (isRegister) {
         setNftStatus(NftStatus.Ready);
       } else {
@@ -146,6 +162,13 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
     }
   };
 
+  const setAmount = (value: number) => {
+    setNft({
+      ...nft,
+      uiAmount: value,
+    });
+  };
+
   useEffect(() => {
     if (nft) {
       setNftStatus(NftStatus.Loading);
@@ -180,6 +203,18 @@ const NFTDetail: React.FC<NFTDetailPropType> = ({
           <p className='detail'>{tokenAddress}</p>
           <Title level={5}>Token ID</Title>
           <p className='detail'>{tokenId}</p>
+          {standard === NFTStandard.ERC_1155 && (
+            <>
+              <Title level={5}>Token Amount</Title>
+              <Input
+                type='number'
+                disabled={disabled}
+                className='token-amount-input'
+                value={uiAmount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+              />
+            </>
+          )}
           <Title level={5}>Token Standard</Title>
           <p className='detail'>{getNFTStandard(standard).label}</p>
           <Title level={5}>Blockchain</Title>

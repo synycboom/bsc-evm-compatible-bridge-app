@@ -38,6 +38,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'explicit-module-boundary-types': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/naming-convention': 'off',
   },
   ignorePatterns: ['src/_aqua/*.ts'],
 };

@@ -1,4 +1,9 @@
-import { Chain, INFTParsedTokenAccount, NFTStandard } from 'src/interfaces/nft';
+import {
+  Chain,
+  INFTParsedTokenAccount,
+  NFTStandard,
+  TransferStatus,
+} from 'src/interfaces/nft';
 
 export const EMPTY_NFT_DATA: INFTParsedTokenAccount = {
   tokenId: '',
@@ -19,4 +24,16 @@ export const EMPTY_NFT_DATA: INFTParsedTokenAccount = {
   standard: NFTStandard.ERC_721,
   chain: Chain.ETHEREUM,
   chainId: 0,
+};
+
+export const DEFAULT_STEP_DATA_STATE = {
+  step: 0,
+  transferStatus: TransferStatus.NotStart,
+};
+
+export const DEFAULT_BRIDGE_ADDRESS_STATE = {
+  sourceAddress: '',
+  sourceChain: undefined,
+  targetAddress: '',
+  targetChain: undefined,
 };

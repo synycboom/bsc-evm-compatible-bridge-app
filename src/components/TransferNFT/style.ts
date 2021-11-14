@@ -5,17 +5,26 @@ const TransferNFTStyle = styled.div`
     margin-top: 16px;
     display: flex;
     align-items: center;
+    margin-bottom: 8px;
 
-    .status-label {
-      font-size: 18px;
+    .ant-typography {
       margin-right: 8px;
-      font-weight: bold;
+      margin-bottom: 0px;
     }
     .ant-tag {
       font-size: 16px;
       font-size: 14px;
       font-weight: bold;
       line-height: 22px;
+    }
+  }
+  .token-container {
+    display: flex;
+    margin-bottom: 8px;
+
+    .ant-typography {
+      margin-right: 8px;
+      margin-bottom: 0px;
     }
   }
 `;

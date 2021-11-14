@@ -25,7 +25,7 @@ import contract721 from 'src/contract/erc721';
 import * as api from 'src/apis/nft';
 import { message } from 'antd';
 import contractErc1155 from 'src/contract/erc1155';
-import { EMPTY_NFT_DATA } from 'src/constances/nft';
+import { EMPTY_NFT_DATA } from 'src/constants/nft';
 
 type ChooseNFTModalPropType = {
   visible: boolean;
@@ -45,7 +45,6 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   const [items, setItems] = useState<INFTParsedTokenAccount[]>([]);
   const [isManual, setIsManual] = useState(false);
   const [contractAddress, setContractAddress] = useState('');
-  const [amount, setAmount] = useState(0);
   const [tokenId, setTokenId] = useState<number | null>();
   const setNft = useSetRecoilState(nftState);
 
@@ -79,18 +78,7 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   };
 
   const onSelected = (item: INFTParsedTokenAccount) => {
-    if (nftStandard === NFTStandard.ERC_721) {
-      setNft(item);
-    } else if (nftStandard === NFTStandard.ERC_1155) {
-      if (!amount) {
-        message.error('Please fill amount!');
-        return;
-      }
-      setNft({
-        ...item,
-        uiAmount: amount,
-      });
-    }
+    setNft(item);
     onClose();
   };
 
@@ -122,10 +110,6 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
   };
 
   const confirmToken1155 = async () => {
-    if (!amount) {
-      message.error('Please fill amount!');
-      return;
-    }
     if (tokenId && contractAddress) {
       const tokenUri = await contractErc1155.getTokenUri(
         contractAddress,
@@ -133,7 +117,7 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
       );
       if (!tokenUri) return;
       const data = await api.getDataFromTokenUri(tokenUri);
-      console.log(data);
+
       if (!data) {
         message.error('Something went wrong');
         return;
@@ -195,17 +179,6 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               <RedoOutlined />
             </Button>
           </div>
-          {nftStandard === NFTStandard.ERC_1155 && (
-            <div className='token-amount-container'>
-              <span>Token Amount: </span>
-              <Input
-                type='number'
-                className='token-amount-input'
-                value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
-            </div>
-          )}
           <Button
             type='link'
             className='manual-button'
@@ -300,9 +273,11 @@ const ChooseNFTModal: React.FC<ChooseNFTModalPropType> = ({
               ))}
             </Row>
           ) : (
-            <Title level={2} style={{ color: '#a3a3a3' }}>
-              No Data
-            </Title>
+            <div className='no-data-container'>
+              <Title level={2} style={{ color: '#a3a3a3' }}>
+                No Data
+              </Title>
+            </div>
           )}
         </div>
       )}

@@ -37,16 +37,16 @@ const LayoutStyle = styled.div`
   .ant-page-header-heading-extra {
     margin-left: 48px;
     .ant-btn {
-      margin: 0px;
+      margin: 0px 8px;
+      font-size: 16px;
     }
   }
   .ant-btn-link {
     font-weight: bold;
     font-size: 14px;
     color: #2e8582;
-
-    span {
-      text-decoration: underline;
+    &:hover {
+      color: #0b5654;
     }
   }
 `;

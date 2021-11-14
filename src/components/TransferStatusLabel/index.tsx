@@ -1,6 +1,6 @@
 import SyncOutlined from '@ant-design/icons/SyncOutlined';
-import CheckCircleTwoTone from '@ant-design/icons/CheckCircleTwoTone';
-import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
+// import CheckCircleTwoTone from '@ant-design/icons/CheckCircleTwoTone';
+// import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined';
 import Tag from 'antd/lib/tag';
 import styled from 'styled-components';
 import { TransferStatus } from 'src/interfaces/nft';
@@ -35,17 +35,17 @@ const TransferStatusLabel: any = ({ status }: any) => {
       {status === TransferStatus.Done && (
         <>
           <Tag color='#4ac715'>Transfer success</Tag>
-          <div className='transfer-status'>
+          {/* <div className='transfer-status'>
             <CheckCircleTwoTone twoToneColor='#4ac715' />
-          </div>
+          </div> */}
         </>
       )}
       {status === TransferStatus.Error && (
         <>
           <Tag color='#e70000'>Transfer Error</Tag>
-          <div className='transfer-status'>
+          {/* <div className='transfer-status'>
             <CloseCircleOutlined color='red' />
-          </div>
+          </div> */}
         </>
       )}
     </Style>

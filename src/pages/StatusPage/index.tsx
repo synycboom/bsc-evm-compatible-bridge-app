@@ -1,14 +1,9 @@
 import Table from 'antd/lib/table';
 import Title from 'antd/lib/typography/Title';
-import Tooltip from 'antd/lib/tooltip';
 import { useEffect, useState } from 'react';
 import { getTransferStatusList } from 'src/apis/nft';
 import PageLayout from 'src/components/PageLayout';
-import {
-  formatAddress,
-  getChainDataByChainId,
-  useChainList,
-} from 'src/helpers/wallet';
+import { getChainDataByChainId, useChainList } from 'src/helpers/wallet';
 import dayjs from 'dayjs';
 import { getNFTStatusFromState } from 'src/helpers/nft';
 import TransferStatusLabel from 'src/components/TransferStatusLabel';
@@ -18,21 +13,6 @@ import ConnectWalletButton from 'src/components/ConnectWalletButton';
 import StatusPageStyle from './style';
 import { SwapState } from 'src/interfaces/nft';
 import TextAddress from 'src/components/TextAddress';
-
-const AddressTooltip = ({ text, children }: any) => {
-  return (
-    <Tooltip
-      title={text}
-      trigger={['hover']}
-      overlayInnerStyle={{
-        width: 350,
-        borderRadius: 8,
-      }}
-    >
-      {children}
-    </Tooltip>
-  );
-};
 
 const StatusPage: React.FC = () => {
   const { account } = useWeb3React();
@@ -143,11 +123,11 @@ const StatusPage: React.FC = () => {
         <TextAddress address={text} length={4} copyable />
       ),
     },
-    {
-      title: 'Token ID',
-      dataIndex: 'token_id',
-      key: 'token_id',
-    },
+    // {
+    //   title: 'Token ID',
+    //   dataIndex: 'token_id',
+    //   key: 'token_id',
+    // },
     {
       title: 'Amounts',
       dataIndex: 'amounts',
