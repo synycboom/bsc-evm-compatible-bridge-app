@@ -133,9 +133,9 @@ export const get721TransferData = async (
       data.dstTokenAddress = dst_token_addr;
       data.dstTokenId = token_id;
     } else if (ERROR_STATE.includes(state)) {
-      status = TransferStatus.Error;
+      data.status = TransferStatus.Error;
     } else {
-      status = TransferStatus.InProgress;
+      data.status = TransferStatus.InProgress;
     }
   } catch (error) {
     console.error(error);
@@ -168,9 +168,9 @@ export const get1155TransferStatus = async (
       data.dstTokenAddress = dst_token_addr;
       data.dstTokenId = token_id;
     } else if (ERROR_STATE.includes(state)) {
-      status = TransferStatus.Error;
+      data.status = TransferStatus.Error;
     } else {
-      status = TransferStatus.InProgress;
+      data.status = TransferStatus.InProgress;
     }
   } catch (error) {
     console.error(error);
