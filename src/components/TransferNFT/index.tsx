@@ -58,8 +58,8 @@ const TransferNFT: React.FC = () => {
         tokenAddress: dstTokenAddress,
         tokenId: dstTokenId,
       });
-      setTransferStatus(status);
     }
+    setTransferStatus(status);
   };
 
   useEffect(() => {
