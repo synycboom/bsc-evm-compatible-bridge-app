@@ -108,7 +108,6 @@ const TransferNFT: React.FC = () => {
         <>
           <Button
             type='primary'
-            className='blue'
             style={{ marginTop: 8 }}
             shape='round'
             onClick={transfer}

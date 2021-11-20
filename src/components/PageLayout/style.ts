@@ -44,10 +44,6 @@ const LayoutStyle = styled.div`
   .ant-btn-link {
     font-weight: bold;
     font-size: 14px;
-    color: #2e8582;
-    &:hover {
-      color: #0b5654;
-    }
   }
 `;
 export default LayoutStyle;

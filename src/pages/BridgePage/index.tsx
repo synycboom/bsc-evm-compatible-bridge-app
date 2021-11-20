@@ -103,7 +103,6 @@ const BridgePage: React.FC = () => {
                     {step === 1 && (
                       <Button
                         type='primary'
-                        className='blue'
                         style={{ marginTop: 8 }}
                         shape='round'
                         onClick={() => setIsModalVisible(true)}

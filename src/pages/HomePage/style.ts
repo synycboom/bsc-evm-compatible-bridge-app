@@ -12,5 +12,11 @@ const HomePageStyle = styled.div`
     margin-top: 12px !important;
     margin-bottom: 32px;
   }
+  .image-container {
+    img {
+      width: 50px;
+      margin-left: 16px;
+    }
+  }
 `;
 export default HomePageStyle;

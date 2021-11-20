@@ -1,6 +1,10 @@
 export enum Chain {
   BSC = 'bsc',
   ETHEREUM = 'ethereum',
+  POLYGON = 'polygon',
+  AVALANCHE = 'avalanche',
+  FANTOM = 'fantom',
+  WANCHAIN = 'wanchain',
 }
 
 export enum NFTStandard {

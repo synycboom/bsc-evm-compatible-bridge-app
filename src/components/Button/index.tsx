@@ -8,11 +8,6 @@ const ButtonStyle = styled(AntdButton)`
   &.ant-btn-round {
     border-radius: 12px;
   }
-
-  &.blue {
-    background: #3fafac;
-    border-color: #3fafac;
-  }
 `;
 
 const Button = (allProps: ButtonProps) => {

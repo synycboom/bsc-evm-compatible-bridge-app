@@ -99,7 +99,8 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   >
                     {chainList.map((chainItem) => (
                       <Option value={chainItem.id} key={chainItem.id}>
-                        <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
+                        <img width={35} src={`/${chainItem.value}.svg`} />{' '}
+                        {chainItem.name}
                       </Option>
                     ))}
                   </Select>
@@ -131,7 +132,8 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   >
                     {chainList.map((chainItem) => (
                       <Option value={chainItem.id} key={chainItem.id}>
-                        <img src={`/${chainItem.value}.svg`} /> {chainItem.name}
+                        <img width={35} src={`/${chainItem.value}.svg`} />{' '}
+                        {chainItem.name}
                       </Option>
                     ))}
                   </Select>

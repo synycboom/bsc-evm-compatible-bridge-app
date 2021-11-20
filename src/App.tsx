@@ -3,7 +3,7 @@ import HomePage from 'src/pages/HomePage';
 import BridgePage from 'src/pages/BridgePage';
 import StatusPage from 'src/pages/StatusPage';
 
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
 import './App.css';
 
 const App: React.FC = () => {

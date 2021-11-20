@@ -2,9 +2,10 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { useWeb3React } from '@web3-react/core';
 import Button from 'src/components/Button';
 import { formatAddress } from 'src/helpers/wallet';
+import { SUPPORTED_CHAINS } from 'src/constants';
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 56, 97, 1000, 2000],
+  supportedChainIds: SUPPORTED_CHAINS,
 });
 
 const ConnectWalletButton = ({ block }: any) => {
@@ -28,7 +29,6 @@ const ConnectWalletButton = ({ block }: any) => {
   return (
     <Button
       type='primary'
-      className='blue'
       block={block}
       shape='round'
       onClick={account ? disconnect : connect}
