@@ -2,7 +2,7 @@ export enum Chain {
   BSC = 'bsc',
   ETHEREUM = 'ethereum',
   POLYGON = 'polygon',
-  AVALANCHE = 'avalanche',
+  // AVALANCHE = 'avalanche',
   FANTOM = 'fantom',
   WANCHAIN = 'wanchain',
 }
@@ -101,8 +101,14 @@ export type InfoData = {
   bsc_erc_721_swap_agent: string;
   eth_erc_1155_swap_agent: string;
   eth_erc_721_swap_agent: string;
+  polygon_erc_721_swap_agent: string;
+  polygon_erc_1155_swap_agent: string;
+  fantom_erc_721_swap_agent: string;
+  fantom_erc_1155_swap_agent: string;
   eth_chain_id: number;
   bsc_chain_id: number;
+  polygon_chain_id: number;
+  fantom_chain_id: number;
 };
 
 export interface TransferData {
