@@ -11,9 +11,7 @@ const LayoutStyle = styled.div`
   .ant-page-header {
     padding: 16px;
   }
-  .ant-page-header-heading {
-    justify-content: unset;
-  }
+
   .ant-page-header-heading-sub-title {
     font-weight: bold;
   }
@@ -36,14 +34,11 @@ const LayoutStyle = styled.div`
 
   .ant-page-header-heading-extra {
     margin-left: 48px;
-    .ant-btn {
+    .ant-btn-link {
       margin: 0px 8px;
       font-size: 16px;
+      font-weight: bold;
     }
-  }
-  .ant-btn-link {
-    font-weight: bold;
-    font-size: 14px;
   }
 `;
 export default LayoutStyle;

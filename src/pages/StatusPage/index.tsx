@@ -174,9 +174,6 @@ const StatusPage: React.FC = () => {
         <div className='header'>
           <Title level={2}>NFT Bridge Status</Title>
         </div>
-        <div className='connect-wallet-container'>
-          <ConnectWalletButton />
-        </div>
         <Title level={4}>ERC-721</Title>
         <Table
           loading={loading}

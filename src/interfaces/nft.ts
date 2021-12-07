@@ -3,8 +3,8 @@ export enum Chain {
   ETHEREUM = 'ethereum',
   POLYGON = 'polygon',
   // AVALANCHE = 'avalanche',
-  FANTOM = 'fantom',
-  WANCHAIN = 'wanchain',
+  // FANTOM = 'fantom',
+  // WANCHAIN = 'wanchain',
 }
 
 export enum NFTStandard {

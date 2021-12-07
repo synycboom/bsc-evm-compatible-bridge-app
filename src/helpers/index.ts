@@ -6,3 +6,11 @@ export const serializeQueryString = (obj: Record<string, string>) => {
     }
   return str.join('&');
 };
+
+export const setRedirectUrl = () => {
+  window.localStorage.setItem('redirectUrl', window.location.pathname);
+};
+
+export const getRedirectUrl = () => {
+  return window.localStorage.getItem('redirectUrl');
+};

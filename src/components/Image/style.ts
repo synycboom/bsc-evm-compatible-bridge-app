@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 const ImageStyle = styled.div`
-  border-radius: 8px 8px 0px 0px;
+  border-radius: 8px;
 
   img {
     object-fit: cover;
     width: 100%;
     height: 100%;
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px;
   }
 
   .error-container {
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px;
     display: flex;
     background: #efefef;
     flex-direction: column;

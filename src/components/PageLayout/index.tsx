@@ -1,6 +1,7 @@
 import { Button, Layout, PageHeader } from 'antd';
 import PageLayoutStyle from './style';
 import { useHistory } from 'react-router-dom';
+import ConnectWalletButton from '../ConnectWalletButton';
 
 const { Content } = Layout;
 
@@ -26,6 +27,7 @@ const PageLayout: React.FC = ({ children }) => {
             <Button type='link' key='3' onClick={() => history.push('/status')}>
               Status
             </Button>,
+            <ConnectWalletButton key='4' />,
           ]}
         ></PageHeader>
         <Content>

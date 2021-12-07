@@ -9,5 +9,11 @@ const requireEnv = (name: string): string => {
 export default {
   API_URL: requireEnv('REACT_APP_API_URL'),
   COVALENT_API_KEY: requireEnv('REACT_APP_COVALENT_API_KEY'),
-  // API_URL: 'https://bridge-api.synycboom.com',
+  UNSTOPPABLEDOMAIN_CLIENT_ID: requireEnv(
+    'REACT_APP_UNSTOPPABLEDOMAIN_CLIENT_ID'
+  ),
+  UNSTOPPABLEDOMAIN_CLIENT_SECRET: requireEnv(
+    'REACT_APP_UNSTOPPABLEDOMAIN_CLIENT_SECRET'
+  ),
+  APP_URL: requireEnv('REACT_APP_URL'),
 };
