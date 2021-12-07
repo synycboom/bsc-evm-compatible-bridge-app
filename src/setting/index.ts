@@ -16,4 +16,5 @@ export default {
     'REACT_APP_UNSTOPPABLEDOMAIN_CLIENT_SECRET'
   ),
   APP_URL: requireEnv('REACT_APP_URL'),
+  // APP_URL: 'http://localhost:3000',
 };

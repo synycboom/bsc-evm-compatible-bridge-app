@@ -7,17 +7,16 @@ import { getChainDataByChainId, useChainList } from 'src/helpers/wallet';
 import dayjs from 'dayjs';
 import { getNFTStatusFromState } from 'src/helpers/nft';
 import TransferStatusLabel from 'src/components/TransferStatusLabel';
-import { useWeb3React } from '@web3-react/core';
-import ConnectWalletButton from 'src/components/ConnectWalletButton';
 
 import StatusPageStyle from './style';
 import { SwapState } from 'src/interfaces/nft';
 import TextAddress from 'src/components/TextAddress';
+import { profileState } from 'src/state/profile';
+import { useRecoilValue } from 'recoil';
 
 const StatusPage: React.FC = () => {
-  const { account } = useWeb3React();
   const chainList = useChainList();
-
+  const { walletAddress } = useRecoilValue(profileState);
   const [data721, setData721] = useState([]);
   const [data1155, setData1155] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -123,11 +122,6 @@ const StatusPage: React.FC = () => {
         <TextAddress address={text} length={4} copyable />
       ),
     },
-    // {
-    //   title: 'Token ID',
-    //   dataIndex: 'token_id',
-    //   key: 'token_id',
-    // },
     {
       title: 'Amounts',
       dataIndex: 'amounts',
@@ -152,21 +146,23 @@ const StatusPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (account) {
+    if (walletAddress) {
       setLoading(true);
       const interval = setInterval(() => {
-        getTransferStatusList(account).then(({ list721, list1155 }: any) => {
-          setData721(list721);
-          setData1155(list1155);
-          setLoading(false);
-        });
+        getTransferStatusList(walletAddress).then(
+          ({ list721, list1155 }: any) => {
+            setData721(list721);
+            setData1155(list1155);
+            setLoading(false);
+          }
+        );
       }, 2000);
       return () => clearInterval(interval);
     } else {
       setData721([]);
       setData1155([]);
     }
-  }, [account]);
+  }, [walletAddress]);
 
   return (
     <StatusPageStyle>

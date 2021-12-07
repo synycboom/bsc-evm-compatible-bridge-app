@@ -19,7 +19,7 @@ import { useRecoilState } from 'recoil';
 
 import ChooseAddressStyle from './style';
 import { message } from 'antd';
-import ConnectWalletButton from '../ConnectWalletButton';
+import Web3ConnectButton from '../ConnectWalletButton/web3';
 
 const { Option } = Select;
 
@@ -106,7 +106,7 @@ const ChooseAccount: React.FC<ChooseAccountPropType> = ({ active, next }) => {
                   </Select>
                   <div />
                   <Title level={5}>Source Address</Title>
-                  <ConnectWalletButton block={true} />
+                  <Web3ConnectButton block={true} />
                 </Space>
               </Col>
               <Col span={2} className='arrow-container'>

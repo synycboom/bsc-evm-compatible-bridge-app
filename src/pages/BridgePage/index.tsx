@@ -72,7 +72,7 @@ const BridgePage: React.FC = () => {
         onOk={confirmModal}
         onCancel={closeModal}
       />
-      <PageLayout>
+      <PageLayout showConnectWallet={false}>
         <div className='header'>
           <Title level={2}>Cross Chain NFT Bridge</Title>
         </div>

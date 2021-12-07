@@ -5,7 +5,10 @@ import ConnectWalletButton from '../ConnectWalletButton';
 
 const { Content } = Layout;
 
-const PageLayout: React.FC = ({ children }) => {
+const PageLayout: React.FC<{ showConnectWallet?: boolean }> = ({
+  children,
+  showConnectWallet = true,
+}) => {
   const history = useHistory();
   return (
     <PageLayoutStyle>
@@ -27,7 +30,10 @@ const PageLayout: React.FC = ({ children }) => {
             <Button type='link' key='3' onClick={() => history.push('/status')}>
               Status
             </Button>,
-            <ConnectWalletButton key='4' />,
+            <ConnectWalletButton
+              key='4'
+              style={{ visibility: showConnectWallet ? 'visible' : 'hidden' }}
+            />,
           ]}
         ></PageHeader>
         <Content>

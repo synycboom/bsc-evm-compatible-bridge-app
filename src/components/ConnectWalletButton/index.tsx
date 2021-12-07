@@ -26,7 +26,7 @@ const ProviderButton = ({ children, onClick, icon }: any) => (
   </Button>
 );
 
-const ConnectWalletButton = ({ block }: any) => {
+const ConnectWalletButton = ({ block, style }: any) => {
   const { account, activate, deactivate } = useWeb3React();
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -118,6 +118,7 @@ const ConnectWalletButton = ({ block }: any) => {
       </ModalStyle>
       <Button
         type='primary'
+        style={style}
         block={block}
         shape='round'
         loading={loading}
@@ -125,6 +126,14 @@ const ConnectWalletButton = ({ block }: any) => {
           profile.walletAddress ? disconnect : () => setModalVisible(true)
         }
       >
+        {profile.ud && (
+          <img
+            width='24px'
+            height='24px'
+            style={{ marginRight: 8 }}
+            src='/ud.png'
+          />
+        )}
         {loading
           ? 'Logout...'
           : profile.walletAddress
