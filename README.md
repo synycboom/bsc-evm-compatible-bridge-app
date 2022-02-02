@@ -1,4 +1,4 @@
-# Integrating “Login With Unstoppable” As A Dapp Login Option
+# Public Goods Project Bounty
 # bsc-evm-compatible-bridge
 ### Project name
 - BIFROST Bridge
@@ -7,11 +7,7 @@
 - https://bifrost-bridge.web.app/
 
 ### Video Demo
-- https://youtu.be/ApyqnNmp0yk
-
-### Person of contact
-- Discord ID: manotien#2332
-- UnstoppableDomain registered account email address: manotien@gmail.com
+- https://youtu.be/eTTMD7Ydk0Y
 
 # Getting Started with Create React App
 

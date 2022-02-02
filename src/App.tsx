@@ -4,6 +4,7 @@ import BridgePage from 'src/pages/BridgePage';
 import StatusPage from 'src/pages/StatusPage';
 import CallbackPage from 'src/pages/CallbackPage';
 import LogoutPage from './pages/LogoutPage';
+import MyNFTPage from './pages/MyNFTPage';
 
 import 'antd/dist/antd.less';
 import './App.css';
@@ -12,6 +13,7 @@ const App: React.FC = () => {
   return (
     <Switch>
       <Route path='/bridge' component={BridgePage} />
+      <Route path='/my-nft' component={MyNFTPage} />
       <Route path='/status' component={StatusPage} />
       <Route path='/callback' component={CallbackPage} />
       <Route path='/logout' component={LogoutPage} />

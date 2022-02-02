@@ -30,6 +30,9 @@ const PageLayout: React.FC<{ showConnectWallet?: boolean }> = ({
             <Button type='link' key='3' onClick={() => history.push('/status')}>
               Status
             </Button>,
+            <Button type='link' key='3' onClick={() => history.push('/my-nft')}>
+              My NFT
+            </Button>,
             <ConnectWalletButton
               key='4'
               style={{ visibility: showConnectWallet ? 'visible' : 'hidden' }}
